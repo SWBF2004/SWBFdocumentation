@@ -2,6 +2,7 @@
 
 | Command | Options | Description |
 | ----|---- | --- |
+| `/adminpw` | <password> | Sets the password for the ingame console |
 | `/ai` | - | ? |
 | `/ainotext` | - | ? |
 | `/audiomaxchannels` | - | Determines the maximum number of audio channels used by the game |
@@ -24,12 +25,12 @@
 | `/gameslice` | ? | ? |
 | `/heroes` | - | Enables Heroes (default is no heroes) |
 | `/install` | ? | ? |
-| `/invincible` | ? | ? |
+| `/invincible` | - | Makes all players invincible |
 | `/lan` | - | Creates a LAN server (default is Internet) |
 | `/lang` | ? | ? |
 | `/latency` | ? | ? |
 | `/loadspam` | ? | ? |
-| `/logfinalscore` | ? | ? |
+| `/logfinalscore` | ? | Logs results to a text file after each map |
 | `/loss` | ? | ? |
 | `/name` | ? | ? |
 | `/netplayers` | ? | ? |
@@ -51,8 +52,8 @@
 | `/ntgui` | ? | ? |
 | `/password` | <password> | Assigns the provided password to the server, clients need to use this password to join |
 | `/playback` | ? | ? |
-| `/playercount` | <playercount> | Sets the minimum number of players required for the round to begin |
-| `/playerlimit` | ? | ? |
+| `/playercount` | <count> | Sets the minimum number of players required for the round to begin |
+| `/playerlimit` | <limit> | Sets the maximum number of players to join a server |
 | `/ppass` | ? | ? |
 | `/profile` | ? | ? |
 | `/quakecam` | ? | ? |
@@ -61,12 +62,12 @@
 | `/resolution` | `<width>` `<height>` | Set display resolution |
 | `/ShowAllServers` | ? | ? |
 | `/ShowAllSessions` | ? | ? |
-| `/sideselect` | ? | ? |
+| `/sideselect` | - | Allows players to pick a side |
 | `/skill` | ? | ? |
 | `/soundwarning` | ? | ? |
-| `/spawn` | ? | ? |
+| `/spawn` | <seconds> | Defines the seconds of immunity after spawning |
 | `/team` | ? | ? |
 | `/throttle` | <bandwidth> | Sets the maximum bandwidth per client (in KB) for the server |
 | `/tps` | <ticks> | Sets the tick rate for the server. This determines the maximum FPS for clients |
-| `/unlimitedammo` | ? | ? |
+| `/unlimitedammo` | - | Players will have unlimited ammo |
 | `/win` | - | Start in windowed mode |
