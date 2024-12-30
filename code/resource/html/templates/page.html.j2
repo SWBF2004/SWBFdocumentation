@@ -1,0 +1,66 @@
+{%- macro print_node(el) -%}
+  {% if el.type() == 'Heading' -%}
+    {%- set tag = 'h' + el.level | string -%}
+    <{{ tag }}>{{ el.text }}</{{ tag }}>
+  {% elif el.type() == 'Text' -%}
+    {{ el.text.replace('\n', '<br>') }}
+  {% elif el.type() == 'Code' -%}
+    <pre>{{ el.text }}</pre>
+  {% elif el.type() == 'Reference' -%}
+    <a href="{{ el.target }}">{{ el.text }}</a>
+  {% elif el.type() == 'Image' -%}
+    <img src="{{ el.target }}" alt="{{ el.alternate_text }}"/>
+  {% elif el.type() == 'ListItem' -%}
+    <li>
+      {% for child in el.children -%}
+        {{- print_node(child) -}}
+      {% endfor %}
+    </li>
+  {% elif el.type() == 'List' -%}
+    <ul>
+      {% for child in el.children -%}
+        {{- print_node(child) -}}
+      {% endfor %}
+    </ul>
+  {% elif el.type() == 'Table' -%}
+    <table>
+      <thead>
+        <tr>
+          {% for cell in el.children[0].children -%}
+          <th align="{{ el.cell_alignment[loop.index - 1]}}">
+            {%- for child in cell.children -%}
+              {{- print_node(child) -}}
+            {%- endfor -%}
+          </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in el.children[1:] -%}
+        <tr>
+          {% for cell in row.children -%}
+          <td align="{{ el.cell_alignment[loop.index - 1]}}">
+            {%- for child in cell.children -%}
+              {{- print_node(child) -}}
+            {%- endfor -%}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{%- endmacro -%}
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="./{{ rel_path.as_posix() }}/assets/base.css"/>
+    <link rel="stylesheet" type="text/css" href="./{{ rel_path.as_posix() }}/assets/page.css"/>
+  </head>
+  <body class="page">
+    <main>
+      {% for child in node.children -%}
+        {{- print_node(child) | indent(4) -}}
+      {%- endfor %}
+    </main>
+  </body>
+</html>

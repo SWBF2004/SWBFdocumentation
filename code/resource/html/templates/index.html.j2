@@ -1,0 +1,70 @@
+{%- macro print_nav_tree(node, level = 0) -%}
+  {% if node.path %}
+  {% set rel_path = node.path.relative_to(root.path) %}
+  <ul>
+    {% if node.path.is_file() and node.path.suffix == '.md' %}
+    <li><a href="{{ rel_path.with_suffix('.html') }}" target="document">{{ rel_path.stem }}</a></li>
+    {% endif %}
+    {%- for child in node.children %}
+      {{- print_nav_tree(child, level + 1) | indent(level) }}
+    {%- endfor %}
+  </ul>
+  {%- endif %}
+{%- endmacro -%}
+<html>
+
+  <head>
+    <link rel="stylesheet" href="./assets/base.css" />
+    <link rel="stylesheet" href="./assets/index.css" />
+    <script src="./assets/script.js"></script>
+  </head>
+
+  <body class="index" onload="main()">
+
+    <nav>
+      {{- print_nav_tree(root, 3) | indent(5) }}
+
+      <span class="keyword">Modding</span>
+      <span class="keyword">ODF</span>
+      <span class="keyword">Textures</span>
+      <span class="keyword">Animations</span>
+    </nav>
+
+    <main>
+      <header>
+        <table>
+          <tr>
+            <td colspan="3" style="text-align:center;">
+              <span class="control">
+                <input id="search-term" type="text" placeholder="Search for ..." />
+              </span>
+              <span class="control">
+                <button onclick="search()">Search</button>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="control">
+                <input id="search-incremental" type="checkbox" disabled/>
+                <label for="search-incremental">Incremental search</label>
+              </span>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+        </table>
+      </header>
+
+      <iframe name="document"></iframe>
+    </main>
+
+    <footer>
+      <section id="search-results"></section>
+    </footer>
+
+  </body>
+
+</html>

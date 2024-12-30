@@ -1,0 +1,303 @@
+:root {
+  --col-background: #013;
+  --col-background-rgb: 0, 17, 51;
+
+  --col-primary: #139;
+  --col-primary-rgb: 17, 51, 151;
+  --col-secondary: #f90;
+  --col-secondary-rgb: 255, 153, 0;
+  --col-accent: #fd0;
+  --col-accent-rgb: 255, 221, 0;
+
+  --col-text-1: #fff;
+  --col-text-1-rgb: 255, 255, 255;
+  --col-text-2: #ddd;
+  --col-text-2-rgb: 221, 221, 221;
+  --col-text-3: #ccc;
+  --col-text-4: #999;
+  --col-text-5: #555;
+  --col-text-6: #222;
+  --col-text-7: #111;
+  --col-text-8: #000;
+}
+
+@font-face {
+  font-family: font;
+  src: url(SWBF1.ttf);
+}
+
+html {
+  font-size: 14pt;
+}
+
+h1 {
+  font-size: 1.7rem;
+}
+
+h2 {
+  font-size: 1.6rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.4rem;
+}
+
+h5 {
+  font-size: 1.3rem;
+}
+
+h1, h2, h3, h4, h5 {
+  text-decoration: underline;
+}
+
+* {
+  font-family: font, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.25rem;
+  cursor: url("arrow.png"), auto;
+}
+
+body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+
+  display: flex;
+  justify-content: space-between;
+  justify-items: center;
+
+  color: var(--col-text-1);
+}
+
+.control {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0.25rem 0.25rem;
+  margin: 0.25rem 0.25rem;
+
+  white-space: nowrap;
+}
+
+.control label {
+  padding: 0.25rem 0.25rem;
+  margin: 0.25rem 0.25rem;
+
+  white-space: nowrap;
+}
+
+/* Link */
+
+a {
+  font-weight: bold;
+  color: var(--col-secondary);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  cursor: pointer;
+}
+
+/* Button */
+
+button {
+  appearance: none;
+  position: relative;
+
+  padding: inherit;
+  margin: inherit;
+
+  min-width: 2rem;
+
+  border: 0;
+  border-radius: 1px;
+
+  font-weight: bold;
+  background-color: #ffaa00;
+  color: var(--col-text-2);
+}
+
+button::before {
+  visibility: hidden;
+  opacity: 0;
+
+  position: absolute;
+  top: 1px;
+  left: 0;
+
+  height: calc(100% - 2px);
+  width: 1px;
+
+  content: "";
+
+  background-color: white;
+  box-shadow: white -1px 0 4px 1px;
+
+  transform: rotate(10deg) translateX(5px);
+  transition: 500ms;
+}
+
+button:hover::before {
+  visibility: visible;
+  opacity: 1;
+
+  left: calc(100% - 2px);
+
+  transform: rotate(0);
+}
+
+/* Input */
+
+input:disabled {
+  text-decoration: line-through;
+}
+
+input:disabled + label {
+  text-decoration: line-through;
+}
+
+/* Text Input */
+
+input[type="text"] {
+  appearance: none;
+  outline: 0;
+
+  position: relative;
+
+  padding: 0.25rem;
+  min-width: 5rem;
+
+  border: 2px solid rgba(var(--col-text-1-rgb), 0.35);
+  border-radius: 1px;
+
+  color: var(--col-text-2);
+  background: linear-gradient(to bottom, rgba(var(--col-primary-rgb), 0.5) 50%, rgba(var(--col-primary-rgb), 0.1) 100%);
+
+  box-shadow: rgba(var(--col-text-1-rgb), 0.35) 0 0 1px 1px;
+
+  caret-color: var(--col-accent);
+  caret-shape: underscore;
+
+  transition: 300ms;
+}
+
+input[type="text"]:hover,
+input[type="text"]:focus {
+  border: 2px solid rgba(var(--col-secondary-rgb), 0.7);
+
+  box-shadow: rgba(var(--col-secondary-rgb), 0.7) 0 0 1px 1px;
+}
+
+input[type="text"]:focus {
+  background: linear-gradient(to bottom, rgba(var(--col-secondary-rgb), 0.7) 30%, rgba(var(--col-secondary-rgb), 0.2) 100%);
+}
+
+/* Checkbox Input */
+
+input[type="checkbox"] {
+  appearance: none;
+
+  position: relative;
+
+  padding: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+
+  border: 1px solid var(--col-text-6);
+  border-radius: 2px;
+
+  background-color: var(--col-text-5);
+
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+
+  position: absolute;
+  left: calc(0.25rem - 1px);
+  top: calc(0.25rem - 1px);
+
+  width: 1rem;
+  height: 1rem;
+
+  border-radius: 2px;
+
+  background-color: var(--col-secondary);
+}
+
+/* Radio Input */
+
+input[type="radio"] {
+  appearance: none;
+
+  position: relative;
+
+  padding: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+
+  border: 1px solid var(--col-text-6);
+  border-radius: 50%;
+
+  background-color: var(--col-text-5);
+
+  cursor: pointer;
+}
+
+input[type="radio"]:checked::after {
+  content: "";
+
+  position: absolute;
+  left: calc(0.25rem - 1px);
+  top: calc(0.25rem - 1px);
+
+  width: 1rem;
+  height: 1rem;
+
+  border-radius: 50%;
+
+  background-color: var(--col-secondary);
+}
+
+/* Code */
+pre {
+  color: var(--col-secondary);
+}
+
+/* Unordered List */
+
+ul {
+  margin: 0;
+  padding: 0.25rem 0 0.25rem 0.75rem;
+  list-style-type: none;
+}
+
+/* Table */
+
+table {
+  width: 100%;
+}
+
+/* Keywords */
+
+span.keyword {
+  padding: 0 0.25rem;
+  border-radius: 5px;
+  color: black;
+  background-color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  font-weight: bolder;
+}
+
+/* Other stuff */
+
+.highlight {
+  color: var(--col-accent);
+}

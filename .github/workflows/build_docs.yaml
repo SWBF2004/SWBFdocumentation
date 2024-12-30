@@ -1,0 +1,36 @@
+name: Build-Docs
+
+on:
+  push:
+    branches: ["*"]
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    env:
+      DIR_BUILD: ${{ github.workspace }}/build
+      DIR_DOCS: ${{ github.workspace }}/docs
+      DIR_HTML_TEMPLATES: ${{ github.workspace }}/code/resource/html/templates
+      DIR_HTML_ASSETS: ${{ github.workspace }}/code/resource/html/assets
+      DIR_RESOURCE: ${{ github.workspace }}/code/resource
+      DIR_SOURCE: ${{ github.workspace }}/code/source
+      BRANCH: ${{ github.head_ref || github.ref_name }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+
+    - name: Build
+      run: |
+        python ${{ env.DIR_SOURCE }}/main.py -f ${{ env.DIR_DOCS }} \
+          HTML -c -d ${{ env.DIR_BUILD }} -t ${{ env.DIR_HTML_TEMPLATES }} -a ${{ env.DIR_HTML_ASSETS }}
+
+    - name: Upload Build Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: docs-${{ env.BRANCH }}-${{ github.sha }}
+        path: ${{ env.DIR_BUILD }}
+        retention-days: 7
