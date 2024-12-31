@@ -2,9 +2,11 @@
   {% if node.path %}
   {% set rel_path = node.path.relative_to(root.path) %}
   <ul>
-    {% if node.path.is_file() and node.path.suffix == '.md' %}
-    <li><a href="{{ rel_path.with_suffix('.html') }}" target="document">{{ rel_path.stem }}</a></li>
-    {% endif %}
+    {%- if node.path.is_file() and node.path.suffix == '.md' -%}
+    <li><a href="./{{ rel_path.with_suffix('.html').as_posix() }}" target="document">{{ rel_path.stem }}</a></li>
+    {%- else -%}
+    <li>{{ rel_path.stem }}</li>
+    {%- endif -%}
     {%- for child in node.children %}
       {{- print_nav_tree(child, level + 1) | indent(level) }}
     {%- endfor %}
@@ -24,10 +26,13 @@
     <nav>
       {{- print_nav_tree(root, 3) | indent(5) }}
 
+      <!--
       <span class="keyword">Modding</span>
       <span class="keyword">ODF</span>
       <span class="keyword">Textures</span>
       <span class="keyword">Animations</span>
+      -->
+
     </nav>
 
     <main>
@@ -62,6 +67,7 @@
     </main>
 
     <footer>
+      <h3>Search Results</h3>
       <section id="search-results"></section>
     </footer>
 

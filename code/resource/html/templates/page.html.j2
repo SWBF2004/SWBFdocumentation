@@ -1,13 +1,17 @@
 {%- macro print_node(el) -%}
   {% if el.type() == 'Heading' -%}
     {%- set tag = 'h' + el.level | string -%}
-    <{{ tag }}>{{ el.text }}</{{ tag }}>
+    <{{ tag }}>
+      {% for child in el.children -%}
+        {{- print_node(child) -}}
+      {% endfor %}
+    </{{ tag }}>
   {% elif el.type() == 'Text' -%}
     {{ el.text.replace('\n', '<br>') }}
   {% elif el.type() == 'Code' -%}
     <pre>{{ el.text }}</pre>
   {% elif el.type() == 'Reference' -%}
-    <a href="{{ el.target }}">{{ el.text }}</a>
+    <a href="{{ el.target.replace('.md', '.html') }}">{{ el.text }}</a>
   {% elif el.type() == 'Image' -%}
     <img src="{{ el.target }}" alt="{{ el.alternate_text }}"/>
   {% elif el.type() == 'ListItem' -%}

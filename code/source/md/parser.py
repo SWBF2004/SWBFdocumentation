@@ -10,9 +10,10 @@ class Parser(Iterator):
 
     class State:
         Start, \
+        Heading, \
         List, \
         Table \
-            = range(3)
+            = range(4)
 
     def __init__(self, file: Path, tokens: list):
         super().__init__(tokens)
@@ -98,6 +99,21 @@ class Parser(Iterator):
             else:
                 self.error(TK.Null)
 
+        elif self.state[-1] == Parser.State.Heading:
+            if self.get().type == TK.SquareBracketOpen:
+                self.parse_reference()
+            elif self.get().type == TK.Backtick:
+                self.parse_code()
+            elif self.get().type in TK.Text:
+                self.parse_text()
+            elif self.get().type == TK.Space:
+                # Discard space at the start of the line
+                self.discard()
+            elif self.get().type == TK.LineFeed:
+                return
+            else:
+                self.error(TK.Null)
+
         elif self.state[-1] == Parser.State.List:
             if self.get().type == TK.SquareBracketOpen:
                 self.parse_reference()
@@ -132,12 +148,6 @@ class Parser(Iterator):
             pass
 
         self.curr.add(Text(self.collect_tokens()))
-
-    def parse_heading(self):
-        self.consume_until(TK.LineFeed)
-
-        self.curr.add(Heading(self.collect_tokens()))
-
         
     def parse_image(self):
         self.consume_strict(TK.ExclamationMark)
@@ -196,6 +206,25 @@ class Parser(Iterator):
             self.consume_strict(TK.Backtick)
 
         self.curr.add(Code(self.collect_tokens()))
+
+    def parse_heading(self):
+        self.state.append(Parser.State.Heading)
+
+        heading = Heading(None)
+        self.curr.add(heading)
+        self.curr = heading
+
+        while self.consume(TK.NumberSign):
+            pass
+
+        tokens = self.collect_tokens()
+        heading.level = len(tokens)
+
+        while self and self.get().type != TK.LineFeed:
+            self.parse_nodes()
+
+        self.curr = heading.parent
+        self.state.pop()
 
     def parse_list(self):
         self.state.append(Parser.State.List)

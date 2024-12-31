@@ -22,11 +22,16 @@ function initWebsocket() {
     if(!searchResults)
       return;
 
-    function createEntry(entry) {
-      return `<li>${entry.file}</li>${entry.match}<br>`;
+    function showEntry(entry) {
+      console.log(entry)
+      return `<li>${entry.begin}<span class="highlight">${entry.match}</span>${entry.end}</li>`;
     }
 
-    searchResults.innerHTML = "<ul>" + data.map(o => createEntry(o)).join('<br>') + "</ul>";
+    function showFile(file) {
+      return `<ul><a href="${file[0]}.html" target="document">${file[0]}</a>:${file[1].map(entry => showEntry(entry)).join("")}</ul>`
+    }
+
+    searchResults.innerHTML = Object.entries(data).map(file => showFile(file)).join("<br>");
 
   };
 

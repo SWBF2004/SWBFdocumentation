@@ -62,16 +62,11 @@ class Text(LexicalNode):
         self.text = self.raw().strip()
 
 
-class Heading(LexicalNode):
-    RE = re.compile('(#{0,})(.*)')
+class Heading(Node):
+    def __init__(self, parent: Node = None):
+        super().__init__(parent)
 
-    def __init__(self, tokens: list, parent: Node = None):
-        super().__init__(tokens, parent)
-
-        match = re.search(Heading.RE, self.raw())
-
-        self.level = len(match.group(1))
-        self.text = match.group(2).strip()
+        self.level = 1
 
 
 class Image(LexicalNode):

@@ -42,41 +42,46 @@ def export_html(assets: Path, templates: Path, destination: Path, clear: bool, r
 
     for node in root.walk():
         if node.type() == 'Document' and node.path.suffix == '.md':
-            rel_path = destination / node.path.relative_to(root.path)
-            rel_path.parent.mkdir(exist_ok=True, parents=True)
-            page_file = rel_path.with_suffix('.html')
+            norm_path = destination / node.path.relative_to(root.path)
+            norm_path.parent.mkdir(exist_ok=True, parents=True)
+            rel_path = Path(os.path.relpath(root.path, node.path))
+            page_file = norm_path.with_suffix('.html')
 
             logger.info(f'Render {page_file.as_posix()}')
-            page_file.open('w+').write(page_template.render(
-                root=root, node=node, rel_path=Path(os.path.relpath(root.path, node.path))))
+            page_file.open('w+').write(page_template.render(root=root, node=node, rel_path=rel_path))
 
 
 def search(root: Folder, term: str):
-    results = []
-    regex = re.compile(term)  # TODO
-
-    def highlight(text: str):
-        return f'<span class="highlight">{text}</span>'
+    results = {}
+    regex = re.compile(term)
 
     file = ''
     for node in root.walk():
 
-        if node.type() in ['Folder', 'Document']:
-            file = str(node.path.as_posix())
-            pos = file.find(term)
-            if pos > -1:
-                results.append({
-                    'match': f'{file[:pos]}{highlight(term)}{file[pos + len(term):]}',
-                    'file': f'{file}'
+        if node.type() == 'Document':
+            norm_path = node.path.relative_to(root.path)
+            file = str(norm_path.with_suffix('').as_posix())
+
+            for match in re.finditer(regex, file):
+                if file not in results:
+                    results[file] = []
+
+                results[file].append({
+                    'begin': file[:match.start()],
+                    'match': match.group(),
+                    'end': file[match.end():]
                 })
 
-        elif node.type() in ['Text', 'Heading', 'Reference', 'Code']:
+        elif node.type() in ['Text', 'Reference', 'Code']:
             text = node.text
-            pos = text.find(term)
-            if pos > -1:
-                results.append({
-                    'match': f'{text[:pos]}{highlight(term)}{text[pos + len(term):]}',
-                    'file': f'{file}'
+            for match in re.finditer(regex, text):
+                if file not in results:
+                    results[file] = []
+
+                results[file].append({
+                    'begin': text[:match.start()],
+                    'match': match.group(),
+                    'end': text[match.end():]
                 })
 
     return results

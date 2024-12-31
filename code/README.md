@@ -18,7 +18,7 @@ document.print()  # Prints nodes of the AST with their respective tokens.
 ```
 
 A node can be of the following types (which also represents the supported Markdown syntax):
-`Node`, `Document`, `Text`, `Heading`, `List`, `Image`, `Reference`, `Code`, `Table`, `TableRow`, `TableCell`
+`Node`, `Document`, `Text`, `Image`, `Reference`, `Code`, `Heading`, `List`, `Table`, `TableRow`, `TableCell`
 
 ## Generator
 
