@@ -10,6 +10,7 @@ jobs:
 
     env:
       DIR_BUILD: ${{ github.workspace }}/build
+      DIR_CODE: ${{ github.workspace }}/code
       DIR_DOCS: ${{ github.workspace }}/docs
       DIR_HTML_TEMPLATES: ${{ github.workspace }}/code/resource/html/templates
       DIR_HTML_ASSETS: ${{ github.workspace }}/code/resource/html/assets
@@ -24,7 +25,7 @@ jobs:
         submodules: 'true'
     
     - name: Setup
-      run: python -m pip install -r ${{ env.DIR_SOURCE }}/requirements.txt
+      run: python -m pip install -r ${{ env.DIR_CODE }}/requirements.txt
 
     - name: Build
       run: |
