@@ -4,7 +4,7 @@ import json
 import webbrowser
 from websockets.sync.server import ServerConnection, serve
 from pathlib import Path
-from shutil import copytree, rmtree
+from shutil import copytree, copy, rmtree
 from jinja2 import Environment, FileSystemLoader
 from md.nodes import Folder
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -41,14 +41,35 @@ def export_html(assets: Path, templates: Path, destination: Path, clear: bool, r
     page_template = env.get_template('page.html.j2')
 
     for node in root.walk():
-        if node.type() == 'Document' and node.path.suffix == '.md':
+        if node.type() == 'Document':
             norm_path = destination / node.path.relative_to(root.path)
             norm_path.parent.mkdir(exist_ok=True, parents=True)
-            rel_path = Path(os.path.relpath(root.path, node.path))
-            page_file = norm_path.with_suffix('.html')
 
-            logger.info(f'Render {page_file.as_posix()}')
-            page_file.open('w+').write(page_template.render(root=root, node=node, rel_path=rel_path))
+            if node.path.suffix == '.md':
+                ext_refs = []
+                int_refs = []
+
+                for child in node.walk():
+                    if child.type() in ['Reference', 'Image']:
+                        if child.target.find('http') > -1:
+                            ext_refs.append(child)
+                        else:
+                            int_refs.append(child)
+
+                rel_path = Path(os.path.relpath(root.path, node.path))
+                page_file = norm_path.with_suffix('.html')
+
+                logger.info(f'Render {page_file.as_posix()}')
+                page_file.open('w+').write(page_template.render(
+                    root=root,
+                    node=node,
+                    rel_path=rel_path,
+                    ext_refs=ext_refs,
+                    int_refs=int_refs))
+
+            else:
+                logger.info(f'Copying {node.path.as_posix()} -> {norm_path.as_posix()}')
+                copy(node.path, norm_path)
 
 
 def search(root: Folder, term: str):

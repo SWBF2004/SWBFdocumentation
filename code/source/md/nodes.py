@@ -77,7 +77,7 @@ class Image(LexicalNode):
 
         match = re.search(Image.RE, self.raw())
 
-        self.alternate_text = match.group(1)
+        self.text = match.group(1)
         self.target = match.group(2)
 
 

@@ -13,7 +13,7 @@
   {% elif el.type() == 'Reference' -%}
     <a href="{{ el.target.replace('.md', '.html') }}">{{ el.text }}</a>
   {% elif el.type() == 'Image' -%}
-    <img src="{{ el.target }}" alt="{{ el.alternate_text }}"/>
+    <img src="{{ el.target }}" alt="{{ el.text }}"/>
   {% elif el.type() == 'ListItem' -%}
     <li>
       {% for child in el.children -%}
@@ -57,6 +57,11 @@
 {%- endmacro -%}
 <html>
   <head>
+    <script>
+      function urlName() {
+        return "localhost";
+      }
+    </script>
     <link rel="stylesheet" type="text/css" href="./{{ rel_path.as_posix() }}/assets/base.css"/>
     <link rel="stylesheet" type="text/css" href="./{{ rel_path.as_posix() }}/assets/page.css"/>
   </head>
@@ -65,6 +70,24 @@
       {% for child in node.children -%}
         {{- print_node(child) | indent(4) -}}
       {%- endfor %}
+
+      {% if int_refs %}
+      <h3>Links</h3>
+      <ul>
+      {% for child in int_refs -%}
+        <li><a href="{{ child.target }}">{{ child.text}}</a></li>
+      {%- endfor %}
+      </ul>
+      {% endif %}
+
+      {% if ext_refs %}
+      <h3>External Links</h3>
+      <ul>
+      {% for child in ext_refs -%}
+        <li><a href="{{ child.target }}">{{ child.text}}</a></li>
+      {%- endfor %}
+      </ul>
+      {% endif %}
     </main>
   </body>
 </html>
