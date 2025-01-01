@@ -25,7 +25,7 @@ A node can be of the following types (which also represents the supported Markdo
 Generates a HTML representation from a collection of nodes. 
 Ideally, the collection of nodes is a folder of Markdown files.
 
-Examples:
+Example:
 ```python
 from md.nodes import Folder
 from export.html import export_html
@@ -42,6 +42,18 @@ The `index.html` file can be used as entry point.
 The `"assets/"` folder can be used for additional resources like fonts, images, style sheets, or scripts that will be shipped with the exported files.
 
 `"destination/"` determines the output folder of all exported files.
+
+### HTML Export
+
+The HTML generator can be given additional arguments to launch an HTTP webserver to host the HTML files and a Websocket server to enable the search functionality.
+
+Example (launched from the code/ folder):
+```
+python ./source/main.py -f ../docs/ HTML -c -d build -t ./resource/html/templates/ -a ./resource/html/assets/ -p 9000
+```
+
+This will open the default browser at localhost:9000/index.html which will look something like that:
+![Page](https://github.com/SWBF2004/SWBFdocumentation/blob/master/code/resource/images/doc.png)
 
 ## Tests
 

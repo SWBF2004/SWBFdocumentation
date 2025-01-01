@@ -1,7 +1,9 @@
 # SWBF Documentation
 
-## TOC
+## docs/
 
-- [Executable commands](https://github.com/21stcenturyclan/SWBFdocumentation/tree/master/documents/executable_commands.md)
-- [Chat commands](https://github.com/21stcenturyclan/SWBFdocumentation/tree/master/documents/chat_commands.md)
-- [Offsets](https://github.com/21stcenturyclan/SWBFdocumentation/tree/master/documents/offsets.md)
+The docs folder contains all the documentation files (articles, tutorials, additional resources).
+
+## code/
+
+The code folder contains scripts to process Markdown files.
