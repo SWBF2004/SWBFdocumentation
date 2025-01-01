@@ -38,3 +38,23 @@ jobs:
         name: docs-${{ env.BRANCH }}-${{ github.sha }}
         path: ${{ env.DIR_BUILD }}
         retention-days: 7
+
+    - name: Upload Build Results for pages
+      id: deployment
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ${{ env.DIR_BUILD }}
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    needs: main
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
