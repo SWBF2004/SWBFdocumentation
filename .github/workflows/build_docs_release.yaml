@@ -44,7 +44,7 @@ jobs:
         path: ${{ env.DIR_BUILD }}
 
     - name: Upload Build Results for pages
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-pages-artifact@v3
       with:
         name: github-pages
         path: ${{ env.DIR_BUILD }}
