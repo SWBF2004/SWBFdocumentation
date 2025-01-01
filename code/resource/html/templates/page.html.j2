@@ -75,7 +75,7 @@
       <h3>Links</h3>
       <ul>
       {% for child in int_refs -%}
-        <li><a href="{{ child.target }}">{{ child.text}}</a></li>
+        <li><a href="{{ child.target.replace('.md', '.html') }}">{{ child.text}}</a></li>
       {%- endfor %}
       </ul>
       {% endif %}
@@ -84,7 +84,7 @@
       <h3>External Links</h3>
       <ul>
       {% for child in ext_refs -%}
-        <li><a href="{{ child.target }}">{{ child.text}}</a></li>
+        <li><a href="{{ child.target.replace('.md', '.html') }}">{{ child.text}}</a></li>
       {%- endfor %}
       </ul>
       {% endif %}
