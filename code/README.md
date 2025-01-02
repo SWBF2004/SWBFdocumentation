@@ -2,6 +2,18 @@
 
 ## Parser
 
+---
+test
+---
+
+---
+@test
+---
+
+---
+# test
+---
+
 Represents a subset of the Markdown syntax as an abstract syntax tree (AST).
 
 Example:
@@ -22,7 +34,7 @@ A node can be of the following types (which also represents the supported Markdo
 
 ## Generator
 
-Generates a HTML representation from a collection of nodes. 
+Generates a HTML representation from a collection of nodes.
 Ideally, the collection of nodes is a folder of Markdown files.
 
 Example:
