@@ -1,5 +1,7 @@
 class Iterator:
-    def __init__(self, iterable: list):
+    def __init__(self, iterable: list, **kwargs):
+        super().__init__(**kwargs)
+
         self.buffer : list = iterable
         self.pos : int = 0
         self.beg : int = 0

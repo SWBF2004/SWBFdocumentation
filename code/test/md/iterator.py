@@ -1,4 +1,4 @@
-from source.md.iterator import Iterator
+from source.util.iterator import Iterator
 from unittest import TestCase
 
 

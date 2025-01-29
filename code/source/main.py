@@ -3,9 +3,9 @@ import signal
 from threading import Thread
 from argparse import ArgumentParser, ArgumentTypeError
 from pathlib import Path
-from md.nodes import Folder, Document
-from md.lexer import Lexer
-from md.parser import Parser
+from util.nodes import Folder, Document
+from formats.md import MD
+from util.lexer import Lexer
 from export.html import export_html, serve_http_server, serve_ws_server
 from util.logging import get_logger
 
@@ -26,8 +26,8 @@ def traverse(path: Path, base: Path) -> Folder:
         if entry.is_file():
             if entry.suffix == '.md':
                 logger.info(f'Processing {entry.relative_to(base).as_posix()}')
-                tokens = Lexer(entry).tokenize()
-                document = Parser(entry, tokens).parse()
+                tokens = Lexer(filepath=entry).tokenize()
+                document = MD(entry, tokens).parse()
                 root.add(document)
             else:
                 root.add(Document(entry))

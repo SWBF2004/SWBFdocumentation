@@ -1,11 +1,94 @@
 import re
 from pathlib import Path
-from md.nodes import Node, Document, Text, Heading, List, ListItem, Image, Reference, Code, Table, TableRow, TableCell
-from md.token import Token, TK
-from md.iterator import Iterator
+from util.nodes import Node, Document, LexicalNode
+from util.token import Token, TK
+from util.parser import Parser
 
 
-class Parser(Iterator):
+class Text(LexicalNode):
+    def __init__(self, tokens: list, parent: Node = None):
+        super().__init__(tokens, parent)
+
+        self.text = self.raw().strip()
+
+
+class Heading(Node):
+    def __init__(self, parent: Node = None):
+        super().__init__(parent)
+
+        self.level = 1
+
+
+class Image(LexicalNode):
+    RE = re.compile(r'\!\[(.*)\]\((.*)\)')
+
+    def __init__(self, tokens: list, parent: Node = None):
+        super().__init__(tokens, parent)
+
+        match = re.search(Image.RE, self.raw())
+
+        self.text = match.group(1)
+        self.target = match.group(2)
+
+
+class Reference(LexicalNode):
+    RE = re.compile(r'\[(.*)\]\((.*)\)')
+
+    def __init__(self, tokens: list, parent: Node = None):
+        super().__init__(tokens, parent)
+
+        match = re.search(Reference.RE, self.raw())
+
+        self.text = match.group(1)
+        self.target = match.group(2)
+
+
+class Code(LexicalNode):
+    RE = re.compile('`([^`]*)`')
+
+    def __init__(self, tokens: list, parent: Node = None):
+        super().__init__(tokens, parent)
+
+        match = re.search(Code.RE, self.raw())
+
+        self.text = match.group(1)
+
+
+class List(Node):
+    def __init__(self, parent: Node = None):
+        super().__init__(parent)
+
+
+class ListItem(Node):
+    def __init__(self, parent: Node = None):
+        super().__init__(parent)
+
+
+class Table(Node):
+    class Align:
+        left = 'left'
+        center = 'center'
+        right = 'right'
+
+    def __init__(self, parent: Node = None):
+        super().__init__(parent)
+
+        self.columns = 0
+        self.cell_alignment = []
+
+
+class TableRow(Node):
+    def __init__(self, parent: Node = None):
+        super().__init__(parent)
+
+
+class TableCell(Node):
+    def __init__(self, parent: Node = None):
+        super().__init__(parent)
+
+
+
+class MD(Document, Parser):
     RE_ALGINMENT = re.compile('((:?-+:?)+)')
 
     class State:
@@ -15,69 +98,24 @@ class Parser(Iterator):
         Table \
             = range(4)
 
-    def __init__(self, file: Path, tokens: list):
-        super().__init__(tokens)
+    def __init__(self, filepath: Path, tokens: list[Token]):
+        super().__init__(filepath=filepath, tokens=tokens)
 
-        self.file: Path = file
-        self.root: Document = Document(file)
-        self.curr: Node = self.root
-        self.state: list = [Parser.State.Start]
+        self.curr: Node = self
+        self.state: list[MD.State] = [MD.State.Start]
 
         # Current Node
         self.nbeg: int = 0
         self.nend: int = 0
 
-    def consume(self, type: TK):
-        if self.get() and self.get().type == type:
-            self.next()
-            return True
-        return False
-
-    def consume_strict(self, type: TK):
-        if not self.consume(type):
-            self.error(type)
-
-    def consume_any(self, types: list):
-        if self.get() and self.get().type in types:
-            self.next()
-            return True
-        return False
-
-    def consume_until(self, type: TK):
-        while self.get() and self.get().type != type:
-            self.next()
-    
-    def discard(self):
-        self.next()
-        self.collect_tokens()
-
-    def collect_tokens(self):
-        self.nbeg = self.nend  # End of last node
-        self.nend = self.pos  # End of current node
-        return self.buffer[self.nbeg:self.nend]
-
-    def error(self, expected: TK):
-        nl = '\n'
-        t: Token = self.get()
-        tokens = self.buffer[self.nend:self.pos + 1]
-        text = "".join(list(map(lambda x: x.text, tokens)))
-        indent = len(text[text.rfind(nl)]) if text.find('\n') > -1 else len(text) - len(tokens[-1].text)
-
-        msg = f'\n\n{self.file.absolute()}: Line {t.row} Col {t.col}\n\n'
-        msg += f'{text}\n'
-        msg += f'{indent * " "}{"^" * len(self.get().text)}\n\n'
-        msg += f'Expected \'{expected}\' got \'{tokens[-1].text}\'\n'
-
-        raise Exception(msg)
-
     def parse(self):
         while self:
             self.parse_nodes()
-        
-        return self.root
+
+        return self
 
     def parse_nodes(self):
-        if self.state[-1] == Parser.State.Start:
+        if self.state[-1] == MD.State.Start:
 
             if self.get().type == TK.NumberSign:
                 self.parse_heading()
@@ -92,14 +130,13 @@ class Parser(Iterator):
             elif self.get().type == TK.VerticalBar:
                 self.parse_table()
             elif self.get().type in [TK.LineFeed, TK.Space]:
-                # Discard newline or space at the start of a line
-                self.discard()
+                self.discard()  # Discard newline or space at the start of a line
             elif self.get().type in TK.Text:
                 self.parse_text()
             else:
                 self.error(TK.Null)
 
-        elif self.state[-1] == Parser.State.Heading:
+        elif self.state[-1] == MD.State.Heading:
             if self.get().type == TK.SquareBracketOpen:
                 self.parse_reference()
             elif self.get().type == TK.Backtick:
@@ -107,14 +144,13 @@ class Parser(Iterator):
             elif self.get().type in TK.Text:
                 self.parse_text()
             elif self.get().type == TK.Space:
-                # Discard space at the start of the line
-                self.discard()
+                self.discard()  # Discard space at the start of the line
             elif self.get().type == TK.LineFeed:
                 return
             else:
                 self.error(TK.Null)
 
-        elif self.state[-1] == Parser.State.List:
+        elif self.state[-1] == MD.State.List:
             if self.get().type == TK.SquareBracketOpen:
                 self.parse_reference()
             elif self.get().type == TK.Backtick:
@@ -122,14 +158,13 @@ class Parser(Iterator):
             elif self.get().type == TK.Minus:
                 self.parse_list()
             elif self.get().type == TK.Space:
-                # Discard spaces at the start of the line
-                self.discard()
+                self.discard()  # Discard spaces at the start of the line
             elif self.get().type in TK.Text:
                 self.parse_text()
             else:
                 self.error(TK.Null)
-        
-        elif self.state[-1] == Parser.State.Table:
+
+        elif self.state[-1] == MD.State.Table:
             if self.get().type in TK.Text:
                 self.parse_text()
             elif self.get().type == TK.ExclamationMark:
@@ -148,7 +183,7 @@ class Parser(Iterator):
             pass
 
         self.curr.add(Text(self.collect_tokens()))
-        
+
     def parse_image(self):
         self.consume_strict(TK.ExclamationMark)
 
@@ -208,7 +243,7 @@ class Parser(Iterator):
         self.curr.add(Code(self.collect_tokens()))
 
     def parse_heading(self):
-        self.state.append(Parser.State.Heading)
+        self.state.append(MD.State.Heading)
 
         heading = Heading(None)
         self.curr.add(heading)
@@ -227,7 +262,7 @@ class Parser(Iterator):
         self.state.pop()
 
     def parse_list(self):
-        self.state.append(Parser.State.List)
+        self.state.append(MD.State.List)
 
         list_root = List(None)
         self.curr.add(list_root)
@@ -236,9 +271,8 @@ class Parser(Iterator):
         while self and self.get().type != TK.LineFeed:
             self.parse_list_item()
 
-            # Discard line feed
-            self.discard()
-        
+            self.discard()  # Discard line feed
+
         self.curr = list_root.parent
         self.state.pop()
 
@@ -247,8 +281,7 @@ class Parser(Iterator):
         self.curr.add(list_item)
         self.curr = list_item
 
-        # Discard list start
-        self.discard()
+        self.discard()  # Discard list start
 
         while self and self.get().type != TK.LineFeed:
             self.parse_nodes()
@@ -259,7 +292,7 @@ class Parser(Iterator):
         self.curr = list_item.parent
 
     def parse_table(self):
-        self.state.append(Parser.State.Table)
+        self.state.append(MD.State.Table)
 
         table = Table(None)
         self.curr.add(table)
@@ -268,8 +301,7 @@ class Parser(Iterator):
         while self and self.get().type != TK.LineFeed:
             self.parse_table_row()
 
-            # Discard line feed
-            self.discard()
+            self.discard()  # Discard line feed
 
         if len(table.children) > 0:
             table.columns = len(table.children[0].children)
@@ -289,7 +321,6 @@ class Parser(Iterator):
             table.children.pop(1)
         else:
             table.cell_alignment = [Table.Align.left] * table.columns
-        
 
         self.curr = table.parent
 
@@ -300,14 +331,12 @@ class Parser(Iterator):
         self.curr.add(row)
         self.curr = row
 
-        # Discard row start
-        self.discard()
+        self.discard()  # Discard row start
 
         while self and self.get().type != TK.LineFeed:
             self.parse_table_cell()
 
-            # Discard cell separator or row end
-            self.discard()
+            self.discard()  # Discard cell separator or row end
 
         self.curr = row.parent
 
