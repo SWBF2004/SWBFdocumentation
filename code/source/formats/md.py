@@ -87,7 +87,6 @@ class TableCell(Node):
         super().__init__(parent)
 
 
-
 class MD(Document, Parser):
     RE_ALGINMENT = re.compile('((:?-+:?)+)')
 
@@ -99,7 +98,8 @@ class MD(Document, Parser):
             = range(4)
 
     def __init__(self, filepath: Path, tokens: list[Token]):
-        super().__init__(filepath=filepath, tokens=tokens)
+        Document.__init__(self, filepath=filepath)
+        Parser.__init__(self, filepath=filepath, tokens=tokens)
 
         self.curr: Node = self
         self.state: list[MD.State] = [MD.State.Start]
@@ -179,8 +179,7 @@ class MD(Document, Parser):
                 self.error(TK.Null)
 
     def parse_text(self):
-        while self.consume_any(TK.Text):
-            pass
+        self.consume_while_any(TK.Text)
 
         self.curr.add(Text(self.collect_tokens()))
 
@@ -189,15 +188,13 @@ class MD(Document, Parser):
 
         self.consume_strict(TK.SquareBracketOpen)
 
-        while self.consume_any(TK.ReferenceText):
-            pass
+        self.consume_while_any(TK.ReferenceText)
 
         self.consume_strict(TK.SquareBracketClose)
 
         self.consume_strict(TK.ParanthesisOpen)
 
-        while self.consume_any(TK.TargetName):
-            pass
+        self.consume_while_any(TK.TargetName)
 
         self.consume_strict(TK.ParanthesisClose)
 
@@ -206,15 +203,13 @@ class MD(Document, Parser):
     def parse_reference(self):
         self.consume_strict(TK.SquareBracketOpen)
 
-        while self.consume_any(TK.ReferenceText):
-            pass
+        self.consume_while_any(TK.ReferenceText)
 
         self.consume_strict(TK.SquareBracketClose)
 
         self.consume_strict(TK.ParanthesisOpen)
 
-        while self.consume_any(TK.TargetName):
-            pass
+        self.consume_while_any(TK.TargetName)
 
         self.consume_strict(TK.ParanthesisClose)
 
@@ -229,12 +224,10 @@ class MD(Document, Parser):
             self.consume_strict(TK.Backtick)
 
             is_block = True
+        
+        self.consume_until(TK.Backtick)
 
-        t = self.get()
-        while t.type != TK.Backtick:
-            t = self.next()
-
-        t = self.next()
+        self.next()
 
         if is_block:
             self.consume_strict(TK.Backtick)
@@ -249,8 +242,7 @@ class MD(Document, Parser):
         self.curr.add(heading)
         self.curr = heading
 
-        while self.consume(TK.NumberSign):
-            pass
+        self.consume_while(TK.NumberSign)
 
         tokens = self.collect_tokens()
         heading.level = len(tokens)

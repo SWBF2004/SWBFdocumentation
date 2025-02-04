@@ -1,8 +1,11 @@
 from source.util.iterator import Iterator
 from unittest import TestCase
+from random import randint 
 
 
 class IteratorTest(TestCase):
+    ALPHABET = [chr(x) for x in range(26)]
+
     def test_empty_buffer(self):
         it = Iterator([])
 
@@ -23,8 +26,8 @@ class IteratorTest(TestCase):
         self.assertEqual(it.consume('i'), True)
         self.assertEqual(it.consume_any(' '), True)
 
-    def test_complex_logix(self):
-        it = Iterator(open(__file__, 'r').read())
+    def test_complex_logic(self):
+        it = Iterator([IteratorTest.ALPHABET[randint(0, 25)] for _ in range(20)])
 
         self.assertTrue(it)
 

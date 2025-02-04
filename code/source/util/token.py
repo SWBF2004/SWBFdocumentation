@@ -21,6 +21,7 @@ class Temp:
     ]
 """
 
+
 class TK:
     def __class_getitem__(klass, sym: str) -> int:
         for k, v in TK.__dict__.items():
@@ -35,24 +36,25 @@ class TK:
         ['\n', '\r', ' ', '\t', '\v']
 
     Separators = [
-        ExclamationMark, NumberSign, ParanthesisOpen, ParanthesisClose,
-        Asterisk, Minus, Period, Slash,
-        EqualSign, SquareBracketOpen, SquareBracketClose,
+        ExclamationMark, QuotationMark, NumberSign, ParanthesisOpen, ParanthesisClose,
+        Asterisk, Minus, Period, Slash, Semicolon,
+        EqualSign, SquareBracketOpen, Backslash, SquareBracketClose,
         Backtick, CurlyBracketOpen, VerticalBar, CurlyBracketClose
     ] = [
-        '!', '#', '(', ')',
-        '*', '-', '.', '/',
-        '=', '[', ']',
+        '!', '"', '#', '(', ')',
+        '*', '-', '.', '/', ';',
+        '=', '[', '\\', ']',
         '`', '{', '|', '}'
     ]
 
     Symbol = 0x30
-    Number = 0x31
-    Word = 0x32
+    Number = 0x31 # Numeric
+    Word = 0x32 # Alphanumeric
 
     # Markdown specific
     TargetName = [Number, Word, Period, Slash, Minus]
-    Text = [Space, HorizontalTabulator, Symbol, Number, Word, ParanthesisOpen, ParanthesisClose, Period, Slash, Minus]
+    Text = [Space, HorizontalTabulator, Symbol, Number, Word, ParanthesisOpen,
+            ParanthesisClose, Period, Slash, Minus, QuotationMark, Asterisk]
     ReferenceText = [Number, Word] + Whitespaces
 
 

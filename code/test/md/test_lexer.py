@@ -1,4 +1,4 @@
-from source.md.lexer import Lexer
+from source.util.lexer import Lexer
 from unittest import TestCase
 
 

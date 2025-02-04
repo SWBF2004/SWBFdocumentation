@@ -1,12 +1,14 @@
+from pathlib import Path
 from util.token import Token, TK
 from util.iterator import Iterator
 from util.nodes import Node
 
 
 class Parser(Iterator):
-    def __init__(self, tokens: list[Token], **kwargs):
-        super().__init__(iterable=tokens, **kwargs)
+    def __init__(self, filepath: Path, tokens: list[Token]):
+        Iterator.__init__(self, iterable=tokens)
 
+        self.filepath : Path = filepath
         self.root: Node = self
 
         # Current Node
@@ -33,10 +35,28 @@ class Parser(Iterator):
     def consume_until(self, type: TK) -> None:
         while self.get() and self.get().type != type:
             self.next()
+
+    def consume_until_any(self, types: list[TK]) -> None:
+        while self.get() and self.get().type not in types:
+            self.next()
+
+    def consume_while(self, type: TK) -> None:
+        while self.get() and self.get().type == type:
+            self.next()
+
+    def consume_while_any(self, types: list[TK]) -> None:
+        while self.get() and self.get().type in types:
+            self.next()
     
-    def discard(self) -> None:
+    def discard(self) -> list[Token]:
         self.next()
-        self.collect_tokens()
+        return self.collect_tokens()
+
+    def number_of_tokens(self) -> int:
+        return self.pos - self.nend
+
+    def tokens(self) -> list[Token]:
+        return self.buffer[self.nend:self.pos + 1]
 
     def collect_tokens(self) -> list[Token]:
         self.nbeg = self.nend  # End of last node
@@ -50,10 +70,12 @@ class Parser(Iterator):
         text = "".join(list(map(lambda x: x.text, tokens)))
         indent = len(text[text.rfind(nl)]) if text.find('\n') > -1 else len(text) - len(tokens[-1].text)
 
-        msg = f'\n\n{self.file.absolute()}: Line {t.row} Col {t.col}\n\n'
+
+        msg = f'\n\n{self.filepath.absolute()}: Line {t.row} Col {t.col}\n\n'
         msg += f'{text}\n'
         msg += f'{indent * " "}{"^" * len(self.get().text)}\n\n'
         msg += f'Expected \'{expected}\' got \'{tokens[-1].text}\'\n'
+        msg += f'Last tokens: {self.tokens()}\n'
 
         raise Exception(msg)
     

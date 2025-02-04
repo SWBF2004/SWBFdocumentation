@@ -19,7 +19,7 @@ class Lexer(Iterator):
         if not stream:
             pass
 
-        super().__init__(stream)
+        super().__init__(iterable=stream)
 
         self.tokens : list[Token] = []
 
@@ -49,7 +49,7 @@ class Lexer(Iterator):
 
     def is_numeric(self, c) -> bool:
         if c:
-            return '0' <= c <= '9' or c == '_'
+            return '0' <= c <= '9'
         return False
     
     def is_alpha_numeric(self, c) -> bool:

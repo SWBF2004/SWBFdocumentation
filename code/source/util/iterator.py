@@ -1,7 +1,5 @@
 class Iterator:
-    def __init__(self, iterable: list, **kwargs):
-        super().__init__(**kwargs)
-
+    def __init__(self, iterable: list):
         self.buffer : list = iterable
         self.pos : int = 0
         self.beg : int = 0
@@ -43,7 +41,7 @@ class Iterator:
             el = self.next()
         return el
 
-    def peek(self, distance: int = 1):
+    def peek(self, distance: int = 1) -> list | None:
         if self.pos + distance < self.end:
             return self.buffer[self.pos + distance]
         return None
@@ -54,12 +52,24 @@ class Iterator:
             return True
         return False
 
-    def consume_any(self, el) -> bool:
+    def consume_any(self, el : list) -> bool:
         if self.buffer[self.pos] in el:
             self.next()
             return True
         return False
 
-    def consume_until(self, el) -> bool:
+    def consume_until(self, el):
         while self and self.buffer[self.pos] != el:
+            self.next()
+
+    def consume_until_any(self, el : list):
+        while self and self.buffer[self.pos] not in el:
+            self.next()
+
+    def consume_while(self, el):
+        while self and self.buffer[self.pos] == el:
+            self.next()
+
+    def consume_while_any(self, el : list):
+        while self and self.buffer[self.pos] in el:
             self.next()

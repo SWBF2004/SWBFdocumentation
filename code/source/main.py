@@ -26,7 +26,7 @@ def traverse(path: Path, base: Path) -> Folder:
         if entry.is_file():
             if entry.suffix == '.md':
                 logger.info(f'Processing {entry.relative_to(base).as_posix()}')
-                tokens = Lexer(filepath=entry).tokenize()
+                tokens = Lexer(entry).tokenize()
                 document = MD(entry, tokens).parse()
                 root.add(document)
             else:
