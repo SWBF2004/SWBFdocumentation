@@ -2,10 +2,11 @@ import re
 import sys
 from pathlib import Path
 from io import FileIO, StringIO
-from util.lexer import Lexer
-from util.parser import Parser
-from util.nodes import Node, Document, LexicalNode
-from util.token import TK, Token
+from parxel.lexer import Lexer
+from parxel.parser import Parser
+from parxel.nodes import Node, Document, LexicalNode
+from parxel.token import TK, Token
+from util.enum import Enum
 from util.logging import get_logger
 
 
@@ -25,7 +26,7 @@ class Block(LexicalNode):
 
         self.header: str = self.raw().replace('(', '').replace(')', '').strip()
 
-        if self.header not in SKY.Headers:
+        if self.header not in SKY.Header:
             logger.warning(f'Block header "{self.header}" is not known.')
 
 
@@ -38,142 +39,129 @@ class Function(LexicalNode):
         self.name: str = function[0]
         self.arguments: list[str] = function[1:]
 
-        if self.name not in SKY.Functions:
+        if self.name not in SKY.Function:
             logger.warning(f'Function name "{self.name}" is not known.')
 
 
 class SKY(Document, Parser):
-    Headers = [
-        'FlatInfo',
-        'DomeInfo',
-        'DomeModel',
-        'LowResTerrain',
-        'SkyInfo',
-        'SkyObject',
-        'SunInfo',
-    ]
+    class Header(Enum):
+        FlatInfo = 'FlatInfo'
+        DomeInfo = 'DomeInfo'
+        DomeModel = 'DomeModel'
+        LowResTerrain = 'LowResTerrain'
+        SkyInfo = 'SkyInfo'
+        SkyObject = 'SkyObject'
+        SunInfo = 'SunInfo'
 
-    Functions = [
-        'Ambient',
-        'AmbientColor',
-        'Angle',
-        'BackAngle',
-        'BackColor',
-        'BackDegree',
-        'BottomDirectionalAmbientColor',
-        'CharacterAmbientColor',
-        'Color',
-        'Degree',
-        'DetailTexture',
-        'DetailTextureScale',
-        'Enable',
-        'FarSceneRange',
-        'Filter',
-        'FogColor',
-        'FogFar',
-        'FogNear',
-        'FogRamp',
-        'FogRange',
-        'Geometry',
-        'Height',
-        'Intensity',
-        'MaxDistance',
-        'Modulate',
-        'MovementScale',
-        'NearSceneRange',
-        'ObjectVisibility',
-        'Offset',
-        'PatchResolution',
-        'ShadowColor',
-        'Softness',
-        'SoftnessParam',
-        'TerrainColorDarkening',
-        'Texture',
-        'TextureSpeed',
-        'Threshold',
-        'TileSize',
-        'TopDirectionalAmbientColor',
-        'VehicleAmbientColor'
-    ]
+    class Function(Enum):
+        Ambient = 'Ambient'
+        AmbientColor = 'AmbientColor'
+        Angle = 'Angle'
+        BackAngle = 'BackAngle'
+        BackColor = 'BackColor'
+        BackDegree = 'BackDegree'
+        BottomDirectionalAmbientColor = 'BottomDirectionalAmbientColor'
+        CharacterAmbientColor = 'CharacterAmbientColor'
+        Color = 'Color'
+        Degree = 'Degree'
+        DetailTexture = 'DetailTexture'
+        DetailTextureScale = 'DetailTextureScale'
+        Enable = 'Enable'
+        FarSceneRange = 'FarSceneRange'
+        Filter = 'Filter'
+        FogColor = 'FogColor'
+        FogFar = 'FogFar'
+        FogNear = 'FogNear'
+        FogRamp = 'FogRamp'
+        FogRange = 'FogRange'
+        Geometry = 'Geometry'
+        Height = 'Height'
+        Intensity = 'Intensity'
+        MaxDistance = 'MaxDistance'
+        Modulate = 'Modulate'
+        MovementScale = 'MovementScale'
+        NearSceneRange = 'NearSceneRange'
+        ObjectVisibility = 'ObjectVisibility'
+        Offset = 'Offset'
+        PatchResolution = 'PatchResolution'
+        ShadowColor = 'ShadowColor'
+        Softness = 'Softness'
+        SoftnessParam = 'SoftnessParam'
+        TerrainColorDarkening = 'TerrainColorDarkening'
+        Texture = 'Texture'
+        TextureSpeed = 'TextureSpeed'
+        Threshold = 'Threshold'
+        TileSize = 'TileSize'
+        TopDirectionalAmbientColor = 'TopDirectionalAmbientColor'
+        VehicleAmbientColor = 'VehicleAmbientColor'
 
     def __init__(self, filepath: Path, tokens: list[Token]):
         Document.__init__(self, filepath=filepath)
         Parser.__init__(self, filepath=filepath, tokens=tokens)
 
-        self.curr = self
-
-    @staticmethod
-    def read(filename: str = None, filepath: Path = None, file: FileIO = None, stream: StringIO = None):
-
-        lexer = Lexer(filename, filepath, file, stream)
-        tokens: list[Token] = lexer.tokenize()
-
-        sky = SKY(filepath, tokens)
-
-        logger.debug(f'Process {filepath}')
-
-        identifier : str = ''
-
-        while sky:
-            if sky.get().type in TK.Whitespaces:
-                sky.discard()  # Discard whitespaces
+    def parse_format(self):
+        while self:
+            if self.get().type in TK.Whitespaces:
+                self.discard()  # Discard whitespaces
 
             # Comment
-            elif sky.get().type == TK.Minus:
-                sky.consume_strict(TK.Minus)
+            elif self.get().type == TK.Minus:
+                self.consume_strict(TK.Minus)
 
-                sky.consume_until(TK.LineFeed)
+                self.consume_until(TK.LineFeed)
 
-                sky.curr.add(Comment(sky.collect_tokens()))
+                comment = Comment(self.collect_tokens())
+                self.add_to_scope(comment)
 
-                sky.discard()  # \n
+                self.discard()  # \n
 
             # Comment
-            elif sky.get().type == TK.Slash:
-                sky.consume_strict(TK.Slash)
+            elif self.get().type == TK.Slash:
+                self.consume_strict(TK.Slash)
 
-                sky.consume_until(TK.LineFeed)
+                self.consume_until(TK.LineFeed)
 
-                sky.curr.add(Comment(sky.collect_tokens()))
+                comment = Comment(self.collect_tokens())
+                self.add_to_scope(comment)
 
-                sky.discard()  # \n
+                self.discard()  # \n
 
             # Begin Block
-            elif sky.get().type == TK.CurlyBracketOpen:
-                sky.discard()  # {
+            elif self.get().type == TK.CurlyBracketOpen:
+                self.discard()  # {
 
             # End Block
-            elif sky.get().type == TK.CurlyBracketClose:
-                sky.discard()  # }
+            elif self.get().type == TK.CurlyBracketClose:
+                self.discard()  # }
 
-                sky.curr = sky.curr.parent
+                self.exit_scope()
 
             # Header or Function
-            elif sky.get().type == TK.Word:
+            elif self.get().type == TK.Word:
 
-                # We assume that the sky format can't have nested blocks.
+                # We assume that the self format can't have nested blocks.
 
-                if isinstance(sky.curr, SKY):
-                    sky.consume_until(TK.ParanthesisClose)
-                    sky.next()
+                if isinstance(self.scope, SKY):
+                    self.consume_until(TK.ParanthesisClose)
+                    self.next()
 
-                    block = Block(sky.collect_tokens())
-                    sky.curr.add(block)
-                    sky.curr = block
+                    block = Block(self.collect_tokens())
+                    self.enter_scope(block)
 
                 else:
-                    sky.consume_until(TK.Semicolon)
-                    sky.next()
+                    self.consume_until(TK.Semicolon)
+                    self.next()
 
-                    sky.curr.add(Function(sky.collect_tokens()))
+                    function = Function(self.collect_tokens())
+                    self.add_to_scope(function)
 
             # Either skip or thow error
             else:
-                logger.warning(f'Unrecognized token "{sky.get()} ({sky.tokens()})".')
-                sky.discard()
-                # sky.error(TK.Null)
+                logger.warning(f'Unrecognized token "{self.get()} ({sky.tokens()})".')
+                self.discard()
+                # self.error(TK.Null)
 
-        return sky
+        return self
 
 
 if __name__ == '__main__':

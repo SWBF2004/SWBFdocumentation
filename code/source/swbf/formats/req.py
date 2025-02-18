@@ -2,11 +2,12 @@ import re
 import sys
 from pathlib import Path
 from io import FileIO, StringIO
-from util.lexer import Lexer
-from util.parser import Parser
-from util.nodes import Node, Document, LexicalNode
-from util.token import TK, Token
+from parxel.lexer import Lexer
+from parxel.parser import Parser
+from parxel.nodes import Node, Document, LexicalNode
+from parxel.token import TK, Token
 from util.logging import get_logger
+from util.enum import Enum
 
 
 logger = get_logger(__name__)
@@ -36,7 +37,7 @@ class Block(LexicalNode):
         self.header: str = self.raw().strip()
         self.type: str = ''
 
-        if self.header not in REQ.Headers:
+        if self.header not in REQ.Header:
             logger.warning(f'Block header "{self.header}" is not known.')
 
 
@@ -47,7 +48,7 @@ class Type(LexicalNode):
 
         self.type: str = self.raw().strip()
 
-        if self.type not in REQ.Types:
+        if self.type not in REQ.Type:
             logger.warning(f'Block type "{self.type}" is not known.')
 
 
@@ -62,7 +63,7 @@ class Property(LexicalNode):
         self.key: str = match.group(1)
         self.value: str = match.group(2)
 
-        if self.key not in REQ.Properties:
+        if self.key not in REQ.Property:
             logger.warning(f'Block property "{self.key}" is not known.')
 
 
@@ -74,137 +75,126 @@ class Value(LexicalNode):
 
 
 class REQ(Document, Parser):
-    Headers = [
-        'REQN',
-        'ucft',
-    ]
+    class Header(Enum):
+        Reqn = 'REQN'
+        Ucft = 'ucft'
 
-    Properties = [
-        'align',
-        'platform',
-    ]
+    class Property(Enum):
+        Align = 'align'
+        Platform = 'platform'
 
-    Types = [
-        'bin',
-        'bnk',
-        'boundary',
-        'config',
-        'congraph',
-        'class',
-        'envfx',
-        'loc',
-        'lvl',
-        'model',
-        'path',
-        'prop',
-        'script',
-        'str',
-        'terrain',
-        'texture',
-        'world',
-        'zaabin',
-        'zafbin',
-    ]
+    class Type(Enum):
+        Bin = 'bin'
+        Bnk = 'bnk'
+        Boundary = 'boundary'
+        Config = 'config'
+        Congraph = 'congraph'
+        Class = 'class'
+        Envfx = 'envfx'
+        Loc = 'loc'
+        Lvl = 'lvl'
+        Model = 'model'
+        Path = 'path'
+        Prop = 'prop'
+        Script = 'script'
+        Str = 'str'
+        Terrain = 'terrain'
+        Texture = 'texture'
+        World = 'world'
+        Zaabin = 'zaabin'
+        Zafbin = 'zafbin'
 
     def __init__(self, filepath: Path, tokens: list[Token]):
         Document.__init__(self, filepath=filepath)
         Parser.__init__(self, filepath=filepath, tokens=tokens)
 
-        self.curr = self
-
-    @staticmethod
-    def read(filename: str = None, filepath: Path = None, file: FileIO = None, stream: StringIO = None):
-
-        lexer = Lexer(filename, filepath, file, stream)
-        tokens: list[Token] = lexer.tokenize()
-
-        req = REQ(filepath, tokens)
-
-        logger.debug(f'Process {filepath}')
-
-        while req:
-            if req.get().type in TK.Whitespaces:
-                req.discard()  # Discard whitespaces
+    def parse_format(self):
+        while self:
+            if self.get().type in TK.Whitespaces:
+                self.discard()  # Discard whitespaces
 
             # Comment
-            elif req.get().type == TK.Minus:
-                req.consume_strict(TK.Minus)
+            elif self.get().type == TK.Minus:
+                self.consume_strict(TK.Minus)
 
-                req.consume_until(TK.LineFeed)
+                self.consume_until(TK.LineFeed)
 
-                req.curr.add(Comment(req.collect_tokens()))
+                comment = Comment(self.collect_tokens())
+                self.add_to_scope(comment)
 
-                req.discard()  # \n
+                self.discard()  # \n
 
             # Begin Block
-            elif req.get().type == TK.CurlyBracketOpen:
-                req.discard()  # {
+            elif self.get().type == TK.CurlyBracketOpen:
+                self.discard()  # {
 
             # End Block
-            elif req.get().type == TK.CurlyBracketClose:
-                req.discard()  # }
+            elif self.get().type == TK.CurlyBracketClose:
+                self.discard()  # }
 
-                req.curr = req.curr.parent
+                self.exit_scope()
 
             # Type, Property, Value
-            elif req.get().type == TK.QuotationMark:
-                req.discard()  # "
+            elif self.get().type == TK.QuotationMark:
+                self.discard()  # "
 
-                req.consume_until_any([TK.EqualSign, TK.QuotationMark])
+                self.consume_until_any([TK.EqualSign, TK.QuotationMark])
 
-                if req.get().type == TK.QuotationMark:
+                if self.get().type == TK.QuotationMark:
 
-                    if isinstance(req.curr, Block) and len(req.curr.children) == 0:
-                        req.curr.add(Type(req.collect_tokens()))
+                    if isinstance(self.scope, Block) and len(req.scope.children) == 0:
+                        type = Type(self.collect_tokens())
+                        self.add_to_scope(type)
 
                     else:
-                        req.curr.add(Value(req.collect_tokens()))
+                        value = Value(self.collect_tokens())
+                        self.add_to_scope(value)
 
-                elif req.get().type == TK.EqualSign:
-                    req.consume_until(TK.QuotationMark)
-                    req.curr.add(Property(req.collect_tokens()))
+                elif self.get().type == TK.EqualSign:
+                    self.consume_until(TK.QuotationMark)
+
+                    property = Property(self.collect_tokens())
+                    self.add_to_scope(property)
 
                 else:
-                    req.error()
+                    self.error()
 
-                req.discard()  # "
+                self.discard()  # "
 
             # Header
-            elif req.get().type == TK.Word:
-                req.consume(TK.Word)
+            elif self.get().type == TK.Word:
+                self.consume(TK.Word)
 
-                block = Block(req.collect_tokens())
-                req.curr.add(block)
-                req.curr = block
+                block = Block(self.collect_tokens())
+                self.enter_scope(block)
 
             # Condition
-            elif req.get().type == TK.NumberSign:
-                req.discard()  # #
+            elif self.get().type == TK.NumberSign:
+                self.discard()  # #
 
                 # Condition name
-                req.consume(TK.Word)
-                req.consume_while_any(TK.Whitespaces)
+                self.consume(TK.Word)
+                self.consume_while_any(TK.Whitespaces)
 
                 # Condition parameters
-                while req.get().type == TK.Word:
-                    req.consume(TK.Word)
-                    req.consume_while_any(TK.Whitespaces)
+                while self.get().type == TK.Word:
+                    self.consume(TK.Word)
+                    self.consume_while_any(TK.Whitespaces)
                 
-                if isinstance(req.curr, Condition): 
-                    req.collect_tokens() # Discard end of condition
-                    req.curr = req.curr.parent
+                if isinstance(self.scope, Condition):
+                    self.collect_tokens() # Discard end of condition
+                    self.exit_scope()
                 else:
-                    condition = Condition(req.collect_tokens())
-                    req.curr.add(condition)
-                    req.curr = condition
+                    condition = Condition(self.collect_tokens())
+                    self.enter_scope(condition)
 
             # Either skip or thow error
             else:
-                logger.warning(f'Unrecognized token "{req.get()} ({req.tokens()})".')
-                req.discard()
-                # req.error(TK.Null)
+                logger.warning(f'Unrecognized token "{self.get()} ({req.tokens()})".')
+                self.discard()
+                # self.error(TK.Null)
 
-        return req
+        return self
 
 
 if __name__ == '__main__':

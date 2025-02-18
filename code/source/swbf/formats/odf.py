@@ -6,6 +6,7 @@ from util.parser import Parser
 from util.nodes import Node, Document, LexicalNode
 from util.token import TK, Token
 from util.logging import get_logger
+from util.enum import Enum
 
 
 logger = get_logger(__name__)
@@ -24,7 +25,7 @@ class Key(LexicalNode):
 
         self.name: str = self.raw().strip()
 
-        if self.name not in ODF.Keys:
+        if self.name not in ODF.Key:
             logger.warning(f'Key name "{self.name}" is not known.')
 
 
@@ -41,1125 +42,1114 @@ class Section(LexicalNode):
 
         self.name: str = self.raw().strip()
 
-        if self.name not in ODF.Sections:
+        if self.name not in ODF.Section:
             logger.warning(f'Section name "{self.name}" is not known.')
 
 
 class ODF(Document, Parser):
-    Sections = [
-       'ExplosionClass',
-       'GameObjectClass',
-       'InputSystem',
-       'InstanceProperties',
-       'OrdnanceClass',
-       'Properties',
-       'WeaponClass',
-    ]
+    class Section(Enum):
+       ExplosionClass = 'ExplosionClass'
+       GameObjectClass = 'GameObjectClass'
+       InputSystem = 'InputSystem'
+       InstanceProperties = 'InstanceProperties'
+       OrdnanceClass = 'OrdnanceClass'
+       Properties = 'Properties'
+       WeaponClass = 'WeaponClas'
 
-    Keys = [
-       'abandon',
-       'Acceleration',
-       'Acceleraton',
-       'AcquiredTargetSound',
-       'ActiveRotateNode',
-       'ActiveSpinNode',
-       'AddHealth',
-       'AddonAttachJoint',
-       'AddShield',
-       'AddShieldOff',
-       'AddSpringBody',
-       'AfterburnerOffSound',
-       'AfterburnerOnSound',
-       'AfterburnerSpeed',
-       'AIDriverGetInSound',
-       'AIDriverGetOutSound',
-       'AIFieldFollowSound',
-       'AIFieldHoldSound',
-       'AIFieldMoveOutSound',
-       'AIGunnerAllClearSound',
-       'AIGunnerGetInSound',
-       'AIGunnerGetOutSound',
-       'AIGunnerSteadySound',
-       'AimAzimuth',
-       'AimDistance',
-       'AimElevation',
-       'AimerNodeName',
-       'AimerPitchLimits',
-       'AimerPitchLimts',
-       'AimerYawLimits',
-       'AimerYawLimts',
-       'AimFactorMove',
-       'AimFactorPostureCrouch',
-       'AimFactorPostureProne',
-       'AimFactorPostureSpecial',
-       'AimFactorPostureStand',
-       'AimFactorStrafe',
-       'AimTension',
-       'AimValue',
-       'AIPassengerGetInSound',
-       'AIPassengerGetOutSound',
-       'AIPassengerMoveOutSound',
-       'AIPassengerStopSound',
-       'AIResponseNosirSound',
-       'AIResponseYessirSound',
-       'AISCDriverGetInSound',
-       'AISCDriverGetOutSound',
-       'AISCFieldFollowSound',
-       'AISCFieldHoldSound',
-       'AISCFieldMoveOutSound',
-       'AISCGunnerAllClearSound',
-       'AISCGunnerGetInSound',
-       'AISCGunnerGetOutSound',
-       'AISCGunnerSteadySound',
-       'AISCPassengerGetInSound',
-       'AISCPassengerGetOutSound',
-       'AISCPassengerMoveOutSound',
-       'AISCPassengerStopSound',
-       'AISCResponseNosirSound',
-       'AISCResponseYessirSound',
-       'AISizeType',
-       'AlignVertical',
-       'AllMusic',
-       'AllyCount',
-       'AllyPath',
-       'Alpha',
-       'Ambient2Sound',
-       'AmbientSound',
-       'AnimalHealth',
-       'AnimalScale',
-       'AnimatedAddon',
-       'AnimatedPilotPosition',
-       'Animation',
-       'AnimationAddon',
-       'AnimationBank',
-       'AnimationExtraFile',
-       'AnimationLowRes',
-       'AnimationName',
-       'AnimationTrigger',
-       'ApproachingTargetSound',
-       'ArmName',
-       'ArmorScale',
-       'AttachDynamic',
-       'AttachedMesh',
-       'AttachEffect',
-       'AttachOdf',
-       'AttachToHardpoint',
-       'AttachToHardPoint',
-       'AttachTrigger',
-       'AutoAimSize',
-       'AutoAimYLimits',
-       'AutoFire',
-       'AvailableForAnyTeam',
-       'BallAcceleration',
-       'BallCollision',
-       'BallLowResModel',
-       'BallMaxLean',
-       'BallMinMoveSpeed',
-       'BallMoveSpeed',
-       'BallMoveThreshold',
-       'BallRadius',
-       'BallRollingFriction',
-       'BallSlippage',
-       'BallTurnSpeed',
-       'BallWaterDamageHeight',
-       'BankAngle',
-       'BankFilter',
-       'BarrelLength',
-       'BarrelNodeName',
-       'BarrelRecoil',
-       'BeamIntensity',
-       'BlurEffect',
-       'BlurLength',
-       'BlurStart',
-       'BodyOmegaXSpringFactor',
-       'BodySpringLength',
-       'BoostSound',
-       'BoxSize',
-       'BuildAnimation',
-       'BuildingAmmo',
-       'BuildingBuild',
-       'BuildingCollision',
-       'BuildingCollisionPrim',
-       'BuildingHealth',
-       'BuildingRebuild',
-       'BuildingScale',
-       'BUILDINGSECTION',
-       'BuildModelOdf',
-       'BuildPoint',
-       'BuiltCollision',
-       'BuiltSound',
-       'CableLength',
-       'CameraDistance',
-       'CameraHeight',
-       'CAMERASECTION',
-       'CanDeflect',
-       'CapturedSound',
-       'CapturePosts',
-       'CaptureRegion',
-       'CaptureTime',
-       'CargoNodeName',
-       'ChangeModeSound',
-       'ChargeDelayHeavy',
-       'ChargeDelayLight',
-       'ChargeRateHeavy',
-       'ChargeRateLight',
-       'ChargeSound',
-       'ChargeSoundPitch',
-       'ChargeUpEffect',
-       'ChunkAngularDamping',
-       'ChunkBounciness',
-       'ChunkDeathSpeed',
-       'ChunkFrequency',
-       'ChunkGeometryName',
-       'ChunkLinearDamping',
-       'ChunkNodeName',
-       'ChunkOmega',
-       'ChunkPhysics',
-       'CHUNKSECTION',
-       'ChunkSimpleFriction',
-       'ChunkSmokeEffect',
-       'ChunkSmokeNodeName',
-       'ChunkSpeed',
-       'ChunkStartDistance',
-       'ChunkStickiness',
-       'ChunkTerrainCollisions',
-       'ChunkTerrainEffect',
-       'ChunkTrailEffect',
-       'ChunkUpFactor',
-       'ChunkVelocityFactor',
-       'CisMusic',
-       'CISMusic',
-       'ClankLeftRunSound',
-       'ClankLeftWalkSound',
-       'ClankRightRunSound',
-       'ClankRightWalkSound',
-       'ClassAllATK',
-       'ClassAllDEF',
-       'ClassCISATK',
-       'ClassCISDEF',
-       'ClassHisATK',
-       'ClassHisDEF',
-       'ClassImpATK',
-       'ClassImpDEF',
-       'classLabel',
-       'ClassLabel',
-       'ClassLocATK',
-       'ClassLocDEF',
-       'ClassRepATK',
-       'ClassRepDEF',
-       'CloseSound',
-       'ClothingRustleSound',
-       'cmd_lclick',
-       'cmd_lhold',
-       'cmd_rclick',
-       'cmd_rhold',
-       'CockedAngle',
-       'CockpitChatterStream',
-       'CockpitTension',
-       'CodeInitialWidth',
-       'Collision',
-       'COLLISION',
-       'CollisionInflict',
-       'CollisionLowResRootScale',
-       'collisionName',
-       'CollisionOtherSound',
-       'CollisionRootScale',
-       'CollisionScale',
-       'CollisionSound',
-       'CollisionThreshold',
-       'Color',
-       'ConeAngle',
-       'ConeFadeFactor',
-       'ConeFadeLength',
-       'ConeHeight',
-       'ConeInitialWidth',
-       'ConeLength',
-       'ConeWidth',
-       'Controllable',
-       'ControlRegion',
-       'ControlZone',
-       'CrouchMoveSpread',
-       'CrouchStillSpread',
-       'Damage',
-       'DamageAttachPoint',
-       'DamageDeduction',
-       'DamageEffect',
-       'DamageEffectScale',
-       'DamageInheritVelocity',
-       'DamageRadius',
-       'DamageRadiusInner',
-       'DamageRadiusOuter',
-       'DamageStartPercent',
-       'DamageStopPercent',
-       'DamageThreshold',
-       'DarknessMax',
-       'DarknessMin',
-       'DeathAnimation',
-       'DeathAnimationExplosion',
-       'DeathAnimationExplosionTime',
-       'DeathDustDelay',
-       'DeathDustEffect',
-       'DeathDustOffset',
-       'DeathEffect',
-       'DeathEffectOffset',
-       'DeathOnCollision',
-       'DeathShakeDelay',
-       'DeathShakeDuration',
-       'DeathShakeForce',
-       'DeathShakeRadius',
-       'DeathSound',
-       'DeathTime',
-       'Decal',
-       'DecayTime',
-       'Deceleration',
-       'DeflectSound',
-       'DenyFlyerLand',
-       'deploy',
-       'DestroyedGeometryName',
-       'DetatchSound',
-       'DisableForCloneWars',
-       'DisableTime',
-       'Discharge',
-       'DischargeSound',
-       'DisguiseOwnerModel',
-       'DisputeSound',
-       'DroidHealth',
-       'DroidScale',
-       'DropItemClass',
-       'DropItemProbability',
-       'DropShadowSize',
-       'Effect',
-       'EffectRegion',
-       'eject',
-       'Emitter',
-       'EnableDeathExplosions',
-       'EnemyColor',
-       'EngineSound',
-       'ExpireEffect',
-       'ExpireTimeEnemy',
-       'ExpireTimeField',
-       'Explosion',
-       'ExplosionClass',
-       'ExplosionCritical',
-       'ExplosionDeath',
-       'ExplosionDestruct',
-       'ExplosionExpire',
-       'ExplosionImpact',
-       'ExplosionName',
-       'ExplosionOffset',
-       'ExplosionTrigger',
-       'ExtremeRange',
-       'EyePointCenter',
-       'EyePointOffset',
-       'FadeOutTime',
-       'FinalExplosion',
-       'FinalExplosionOffset',
-       'FinAnimation',
-       'FireAnim',
-       'FireEmptySound',
-       'FireLoopSound',
-       'FireNodeName',
-       'FireOutsideLimits',
-       'FirePoint',
-       'FirePointName',
-       'FireSound',
-       'FireSoundStop',
-       'FireStateTime',
-       'FireVelocity',
-       'FirstPerson',
-       'FirstPersonFOV',
-       'FirstRadius',
-       'FlareAngle',
-       'FlareIntensity',
-       'FlashColor',
-       'FlashLength',
-       'FlashLightColor',
-       'FlashLightDuration',
-       'FlashLightRadius',
-       'FlatCount',
-       'FlatFaceFactor',
-       'FlatGrassSwing',
-       'FlatHeight',
-       'FlatSizeMultiplier',
-       'FleeSound',
-       'FlickerPeriod',
-       'FlickerType',
-       'FlyerBan',
-       'FLYERSECTION',
-       'FoleyFXClass',
-       'FoleyFXGroup',
-       'FootBoneLeft',
-       'FootBoneRight',
-       'Footstep0Sound',
-       'Footstep1Sound',
-       'Footstep2Sound',
-       'FootstepSound0',
-       'FootstepSound1',
-       'FootStepSound1',
-       'FootstepSound2',
-       'FootStepSound2',
-       'FootstepSound3',
-       'FootstepSound4',
-       'FootstepSound5',
-       'FootWaterSplashEffect',
-       'ForceFireAnimation',
-       'ForceMode',
-       'ForwardSpeed',
-       'ForwardTurnSpeed',
-       'Friction',
-       'FriendlyColor',
-       'frontal_target',
-       'FXName',
-       'GeometryAddon',
-       'GeometryColorMax',
-       'GeometryColorMin',
-       'GeometryLowRes',
-       'geometryName',
-       'GeometryName',
-       'geometryScale',
-       'GeometryScale',
-       'GlowLength',
-       'Gravity',
-       'GravityScale',
-       'GroundedHeight',
-       'GroundedSound',
-       'HealthScale',
-       'HealthSScale',
-       'HealthStatusTexture',
-       'HealthTexture',
-       'Healthtype',
-       'HealthType',
-       'HeardEnemySound',
-       'HeatPerShot',
-       'HeatRecoverRate',
-       'HeatThreshold',
-       'Height',
-       'HeightScale',
-       'HideHealthBar',
-       'HideOnFire',
-       'HideUnbuiltModel',
-       'HidingSound',
-       'HierarchyLevel',
-       'HighResGeometry',
-       'HitLocation',
-       'HitSound',
-       'HoloBeamIntensity',
-       'HoloFadeInTime',
-       'HoloFlareIntensity',
-       'HoloFlickerAlphaMax',
-       'HoloFlickerAlphaMin',
-       'HoloFlickerRate',
-       'HoloHeight',
-       'HoloImageGeometry',
-       'HoloImageIntensity',
-       'HoloLightIntensity',
-       'HoloLightRadius',
-       'HoloOdf',
-       'HoloPopRate',
-       'HoloRotateRate',
-       'HoloSize',
-       'HoloTurnOnTime',
-       'HoloType',
-       'HoloVisibleDistance',
-       'HorizontalSpread',
-       'HoverBan',
-       'HugeBan',
-       'HurtSound',
-       'HydraulicLowerHeight',
-       'HydraulicLowerSound',
-       'HydraulicSound',
-       'HydraulicSoundHeight',
-       'IconStatusTexture',
-       'IconTexture',
-       'IdleAnimation',
-       'IdleDelay',
-       'IdleRotateSpeed',
-       'IdleWaitTime',
-       'IdleWobbleFactor',
-       'IdleWobbleLeftFoot',
-       'IdleWobbleNode',
-       'IdleWobbleRightFoot',
-       'IgnorableCollsion',
-       'ImpactEffect',
-       'ImpactEffectRigid',
-       'ImpactEffectShield',
-       'ImpactEffectSoft',
-       'ImpactEffectStatic',
-       'ImpactEffectTerrain',
-       'ImpactEffectWater',
-       'ImpMusic',
-       'InitialCableLength',
-       'InitialSalvoDelay',
-       'InputSystem',
-       'InstanceProperties',
-       'IsPilotExposed',
-       'JetDuration',
-       'JetEffect',
-       'JetFuelCost',
-       'JetFuelInitialCost',
-       'JetFuelMinBorder',
-       'JetFuelRechargeRate',
-       'JetJump',
-       'JetPush',
-       'JetType',
-       'jump',
-       'JumpDeduction',
-       'JumpSound',
-       'KickBuildup',
-       'KickSpread',
-       'KickStrength',
-       'KillRegion',
-       'KillSoldierSound',
-       'Label',
-       'LandedHeight',
-       'LandingSpeed',
-       'LandingTime',
-       'LandSound',
-       'LaserGlowColor',
-       'LaserLength',
-       'LaserTexture',
-       'LaserWidth',
-       'LeftFootstepSound',
-       'LegBoneLeft',
-       'LegBoneRight',
-       'LegBoneTopLeft',
-       'LegBoneTopRight',
-       'LegPairCount',
-       'LegRayHitLength',
-       'LevelDamp',
-       'LevelFilter',
-       'LevelSpring',
-       'Lifespan',
-       'LifeSpan',
-       'LiftDamp',
-       'LiftSpring',
-       'LightColor',
-       'LightDuration',
-       'Lighting',
-       'LightningEffect',
-       'LightRadius',
-       'lights',
-       'LocalsColor',
-       'LockedOnSound',
-       'LockedSound',
-       'LockOffAngle',
-       'lockOnAngle',
-       'LockOnAngle',
-       'LockOnRange',
-       'LockOnTime',
-       'LockTime',
-       'LostSound',
-       'LowHealthSound',
-       'LowHealthThreshold',
-       'LowResModel',
-       'MapScale',
-       'MapTexture',
-       'MaxAlpha',
-       'MaxBallAngle',
-       'MaxChargeStrengthHeavy',
-       'MaxChargeStrengthLight',
-       'MaxDamage',
-       'MaxDelayHeavy',
-       'MaxDelayLight',
-       'MaxDistance',
-       'MaxFallingLeaves',
-       'MaxHealth',
-       'MaxHeavy',
-       'MaxHeavyDecay',
-       'MaxInterval',
-       'MaxItems',
-       'MaxJumpDistance',
-       'MaxLifetime',
-       'MaxLifeTime',
-       'MaxLight',
-       'MaxLightDecay',
-       'MaxPitchSpeed',
-       'MaxPos',
-       'MaxPressedTime',
-       'MaxPush',
-       'MaxRange',
-       'MaxScatterBirds',
-       'MaxShakeAmt',
-       'MaxShakeLen',
-       'MaxShield',
-       'MaxSize',
-       'MaxSkew',
-       'MaxSpeed',
-       'MaxSpread',
-       'MaxStrafeSpeed',
-       'MaxStrength',
-       'MaxTargets',
-       'MaxTerrainAngle',
-       'MaxTimeLeftHeavy',
-       'MaxTimeLeftLight',
-       'MaxTurnSpeed',
-       'MaxVel',
-       'MaxYawSpeed',
-       'MediumBan',
-       'MidSpeed',
-       'MinAlpha',
-       'MinDamage',
-       'MinDelayHeavy',
-       'MinDelayLight',
-       'MinDistance',
-       'MinEnemyRadius',
-       'MinHeavy',
-       'MinHeavyDecay',
-       'MinInterval',
-       'MinLifetime',
-       'MinLifeTime',
-       'MinLight',
-       'MinLightDecay',
-       'MinPos',
-       'MinPush',
-       'MinRange',
-       'MinShakeAmt',
-       'MinShakeLen',
-       'MinSize',
-       'MinSpeed',
-       'MinSpread',
-       'MinStrength',
-       'MinTimeLeftHeavy',
-       'MinTimeLeftLight',
-       'MinVel',
-       'ModeTexture',
-       'ModeTextureColor',
-       'MountPos',
-       'MoveTension',
-       'MoveTensionX',
-       'MoveTensionY',
-       'MoveTensionZ',
-       'MovingTurnOnly',
-       'Music',
-       'MusicDelay',
-       'MusicSpeed',
-       'MuzzleFlash',
-       'MuzzleFlashEffect',
-       'NeutralColor',
-       'NeutralizeTime',
-       'NextAimer',
-       'NextBarrel',
-       'NextCharge',
-       'NEXTCHARGE',
-       'NextDropItem',
-       'NoCombatInterrupt',
-       'NoDeathExplosions',
-       'NoEnterVehicles',
-       'NoRandomSpring',
-       'NormalDirection',
-       'NumChunks',
-       'NumDustObjectsInEffects',
-       'NumParticles',
-       'NumParts',
-       'NumRays',
-       'NumVisible',
-       'Odf',
-       'Offset',
-       'OmegaXDamp',
-       'OmegaXSpring',
-       'OmegaZDamp',
-       'OmegaZSpring',
-       'OmniLightRadius',
-       'OmniRadius',
-       'OpenSound',
-       'OptimalRange',
-       'OrdnanceClass',
-       'Ordnancecollision',
-       'OrdnanceCollision',
-       'OrdnanceCollisionPrim',
-       'OrdnanceEffect',
-       'OrdnanceGeometryName',
-       'OrdnanceName',
-       'OrdnanceSound',
-       'OverheatSound',
-       'OverheatSoundPitch',
-       'OverheatStopSound',
-       'OverrideTexture',
-       'OverrideTexture2',
-       'PCaxPitchSpeed',
-       'PCMaxPitchSpeed',
-       'PCMaxStrafeSpeed',
-       'PCMaxTurnSpeed',
-       'PCMaxYawSpeed',
-       'PCPitchRate',
-       'PCPitchSpeed',
-       'PCPitchTurnFactor',
-       'PCSpinRate',
-       'PCTurnRate',
-       'PCTurnSpeed',
-       'PCYawTurnFactor',
-       'PersonHealth',
-       'PersonScale',
-       'Pilot9Pose',
-       'PilotAnimation',
-       'PilotPosition',
-       'PilotSkillRepairScale',
-       'PilotType',
-       'pitch_down',
-       'pitch_up',
-       'pitch',
-       'PitchDamp',
-       'PitchFilter',
-       'PitchLimits',
-       'PitchRate',
-       'PitchSpread',
-       'PitchTurnFactor',
-       'PowerupDelay',
-       'Powerupsound',
-       'PPitchRate',
-       'PreparingForDamageSound',
-       'PrimaryWeapon',
-       'ProneMoveSpread',
-       'ProneSound',
-       'ProneStillSpread',
-       'Push',
-       'PushDeduction',
-       'PushRadius',
-       'PushRadiusInner',
-       'PushRadiusOuter',
-       'Radius',
-       'RadiusFadeMax',
-       'RadiusFadeMin',
-       'Range',
-       'RayRadius',
-       'RayTriggerMinSpeed',
-       'RayTriggerWidth',
-       'Rebound',
-       'RecoilDecayHeavy',
-       'RecoilDecayLight',
-       'RecoilDelayHeavy',
-       'RecoilDelayLight',
-       'RecoilLengthHeavy',
-       'RecoilLengthLight',
-       'RecoilStrengthHeavy',
-       'RecoilStrengthLight',
-       'RefillFromItem',
-       'ReloadSound',
-       'ReloadTime',
-       'RepMusic',
-       'ReserveOneForPlayer',
-       'ResetTeam',
-       'RespawnTime',
-       'RestDir',
-       'ReticuleTexture',
-       'ReverseSpeed',
-       'RightFootstepSound',
-       'RollSound',
-       'Rotation',
-       'RotationRate',
-       'RotationVelocity',
-       'RoundDelay',
-       'RoundsPerClip',
-       'RoundsPersalvo',
-       'RoundsPerSalvo',
-       's',
-       'SalvoCount',
-       'SalvoDelay',
-       'SalvoTime',
-       'ScanningRange',
-       'ScatterDistance',
-       'SCDriverGetInSound',
-       'SCDriverGetOutSound',
-       'SCFieldFollowSound',
-       'SCFieldHoldSound',
-       'SCFieldMoveOutSound',
-       'SCGunnerAllClearSound',
-       'SCGunnerGetInSound',
-       'SCGunnerGetOutSound',
-       'SCGunnerSteadySound',
-       'ScopeTexture',
-       'SCPassengerGetInSound',
-       'SCPassengerGetOutSound',
-       'SCPassengerMoveOutSound',
-       'SCPassengerStopSound',
-       'SCResponseNosirSound',
-       'SCResponseYessirSound',
-       'SecondaryWeapon',
-       'Seed',
-       'SelfDestructSoundPitch',
-       'SetAltitude',
-       'Shake',
-       'ShakeLength',
-       'ShakeRadius',
-       'ShakeRadiusInner',
-       'ShakeRadiusOuter',
-       'ShieldEffect',
-       'ShieldOffset',
-       'ShieldOffSound',
-       'ShieldRadius',
-       'ShieldScale',
-       'ShieldSound',
-       'ShockFadeInTime',
-       'ShockFadeOutGain',
-       'ShockFadeOutTime',
-       'ShockSound',
-       'shotdelay',
-       'ShotDelay',
-       'ShotElevate',
-       'ShotPatternCount',
-       'ShotPatternPitchYaw',
-       'ShotsPerSalvo',
-       'SkeletonLowRes',
-       'SkeletonLowResRootScale',
-       'SkeletonName',
-       'SkeletonRootScale',
-       'SkeletonRootScaleLowRes',
-       'SkinnyFactor',
-       'SmallBan',
-       'SmashParkedFlyers',
-       'SniperScope',
-       'SoldierAmmo',
-       'SoldierAnimation',
-       'SoldierBan',
-       'soldierCollision',
-       'Soldiercollision',
-       'SoldierCollision',
-       'SoldierCollisionOnly',
-       'SoldierCollisionPrim',
-       'SoldierHealth',
-       'Sound',
-       'SoundName',
-       'SoundPitchDev',
-       'SoundProperty',
-       'SpawnPath',
-       'SpawnPointCount',
-       'SpawnPointLocation',
-       'SpawnSound',
-       'SpawnTime',
-       'SpinRate',
-       'SpreadLimit',
-       'SpreadPerShot',
-       'SpreadRadius',
-       'SpreadRecover',
-       'SpreadRecoverRate',
-       'SpreadThreshold',
-       'SquatSound',
-       'StandMoveSpread',
-       'StandSound',
-       'StandStillSpread',
-       'static',
-       'Static',
-       'StatusTexture',
-       'steer_left',
-       'steer_right',
-       'steer',
-       'StickAnimal',
-       'StickBuilding',
-       'StickBuildingDead',
-       'StickBuildingUnbuilt',
-       'StickDroid',
-       'StickPerson',
-       'StickTerrain',
-       'StickVehicle',
-       'StompDecal',
-       'StompDecalSize',
-       'StompDetectionType',
-       'StompEffect',
-       'StompThreshold',
-       'StoppedTurnSpeed',
-       'strafe_left',
-       'strafe_right',
-       'strafe',
-       'StrafeRollAngle',
-       'StrafeSpeed',
-       'Strategic_Filter1',
-       'Strategic_Filter2',
-       'Strategic_Filter3',
-       'Strategic_Filter4',
-       'Strategic_Filter5',
-       'Strategic_Filter6',
-       'StrikeOrdnanceName',
-       'SuppressRadius',
-       'SuspensionLeftArmNodeName',
-       'SuspensionMaxOffset',
-       'SuspensionMidOffset',
-       'SuspensionNodeName',
-       'SuspensionRightArmNodeName',
-       'SwingSpeed',
-       'SwingTime',
-       'SwitchImmediately',
-       'TakeoffHeight',
-       'TakeoffSound',
-       'TakeoffSpeed',
-       'TakeoffTime',
-       'TargetableCollision',
-       'TargetAnimal',
-       'TargetBuilding',
-       'TargetDroid',
-       'TargetEnemy',
-       'TargetFriendly',
-       'TargetNeutral',
-       'TargetPerson',
-       'TargetVehicle',
-       'TEMP_AnimationSpeed',
-       'TEMP_Type',
-       'TerrainCollision',
-       'TerrainCollisionPrim',
-       'TerrainLeft',
-       'TerrainRight',
-       'Texture',
-       'ThirdPersonFOV',
-       'throttle_down',
-       'throttle_up',
-       'throttle',
-       'ThrustAttachOffset',
-       'ThrustAttachPoint',
-       'ThrustEffect',
-       'ThrustEffectMaxScale',
-       'ThrustEffectMinScale',
-       'ThrustEffectScaleStart',
-       'ThrustPitchAngle',
-       'TickSound',
-       'TickSoundPitch',
-       'TiltValue',
-       'TowCableCollision',
-       'track_pitch_minus',
-       'track_pitch_plus',
-       'track_pitch_reset',
-       'track_yaw_minus',
-       'track_yaw_plus',
-       'track_yaw_reset',
-       'TrackCenter',
-       'TrackDeathOnAttach',
-       'TrackingSound',
-       'TrackOffset',
-       'Traction',
-       'TrailEffect',
-       'TrakCenter',
-       'TransmitRange',
-       'TransparentType',
-       'TrialEffect',
-       'TriggerAll',
-       'TriggerAnimation',
-       'TriggerCollision',
-       'TriggerContact',
-       'TriggerOffset',
-       'TriggerRadius',
-       'TriggerSingle',
-       'TriggerTeam',
-       'TurnFilter',
-       'TurningOffSound',
-       'TurnOffSound',
-       'TurnOffTime',
-       'TurnOnSound',
-       'TurnOnTime',
-       'TurnRate',
-       'TurnThreshold',
-       'TurretActivateSound',
-       'TurretAmbientSound',
-       'TurretDeactivateSound',
-       'TurretMoveSound',
-       'TurretMoveSoundStartEndPitch',
-       'TurretMoveSoundStartEndTime',
-       'TurretNodeName',
-       'TurretPitchSound',
-       'TurretPitchSoundPitch',
-       'TURRETSECTION',
-       'TurretStartSound',
-       'TurretStopSound',
-       'TurretYawSound',
-       'TurretYawSoundPitch',
-       'UnbuiltGeometryName',
-       'UnbuiltHoloOdf',
-       'unitName',
-       'UnitType',
-       'UprightLowResModel',
-       'UprightWaterDamageHeight',
-       'UseVCollForFlyers',
-       'Value_ATK_Alliance',
-       'Value_ATK_CIS',
-       'Value_ATK_Empire',
-       'Value_ATK_Locals',
-       'Value_ATK_Republic',
-       'Value_DEF_Alliance',
-       'Value_DEF_CIS',
-       'Value_DEF_Empire',
-       'Value_DEF_Locals',
-       'Value_DEF_Republic',
-       'ValueBleed',
-       'VehicleAmmo',
-       'vehiclecollision',
-       'Vehiclecollision',
-       'VehicleCollision',
-       'vehiclecollisiononly',
-       'VehicleCollisiononly',
-       'VehicleCollisionOnly',
-       'VehicleCollisionPrim',
-       'VehicleCollisionSound',
-       'VehicleHealth',
-       'VehiclePosition',
-       'VehicleScale',
-       'VehicleType',
-       'Velocity',
-       'VelocityDamp',
-       'VelocitySpring',
-       'VerticalSpread',
-       'Vine',
-       'Virtual',
-       'VO_All_AllCapture',
-       'VO_All_AllInDispute',
-       'VO_All_AllInfo',
-       'VO_All_AllLost',
-       'VO_All_AllSaved',
-       'VO_All_ImpCapture',
-       'VO_All_ImpInDispute',
-       'VO_All_ImpInfo',
-       'VO_All_ImpLost',
-       'VO_All_ImpSaved',
-       'VO_CIS_CISCapture',
-       'VO_CIS_CISInDispute',
-       'VO_CIS_CISInfo',
-       'VO_CIS_CISLost',
-       'VO_CIS_CISSaved',
-       'VO_CIS_RepCapture',
-       'VO_CIS_RepInDispute',
-       'VO_CIS_RepInfo',
-       'VO_CIS_RepLost',
-       'VO_CIS_RepSaved',
-       'VO_Imp_AllCapture',
-       'VO_Imp_AllInDispute',
-       'VO_Imp_AllInfo',
-       'VO_Imp_AllLost',
-       'VO_Imp_AllSaved',
-       'VO_Imp_ImpCapture',
-       'VO_Imp_ImpInDispute',
-       'VO_Imp_ImpInfo',
-       'VO_Imp_ImpLost',
-       'VO_Imp_ImpSaved',
-       'VO_Rep_CISCapture',
-       'VO_Rep_CISInDispute',
-       'VO_Rep_CISInfo',
-       'VO_Rep_CISLost',
-       'VO_Rep_CISSaved',
-       'VO_Rep_RepCapture',
-       'VO_Rep_RepInDispute',
-       'VO_Rep_RepInfo',
-       'VO_Rep_RepLost',
-       'VO_Rep_RepSaved',
-       'WakeEffect',
-       'WakeWaterSplashEffect',
-       'WalkerLegPair',
-       'WalkerOrientRoll',
-       'WALKERSECTION',
-       'WalkerWidth',
-       'WaterDamageAmount',
-       'WaterDamageInterval',
-       'WaterEffect',
-       'WaterSplashEffect',
-       'WaterWadingSound',
-       'WaverRate',
-       'WaverTurn',
-       'weapon_fire',
-       'weapon_next',
-       'weapon_prev',
-       'weapon_special',
-       'WeaponAmmo',
-       'WeaponAmmo1',
-       'WeaponAmmo2',
-       'WeaponAmmo3',
-       'WeaponAmmo4',
-       'WeaponChange',
-       'WeaponChangeSound',
-       'WeaponChannel',
-       'WeaponChannel1',
-       'WeaponChannel2',
-       'WeaponChannel3',
-       'WeaponChannel4',
-       'WeaponClass',
-       'WeaponName',
-       'WeaponName1',
-       'WeaponName2',
-       'WeaponName3',
-       'WeaponName4',
-       'WeaponSection',
-       'WEAPONSECTION',
-       'WiggleAmount',
-       'WiggleSpeed',
-       'WindSound',
-       'WingModel',
-       'YawLimits',
-       'YawSpread',
-       'YawTurnFactor',
-       'YOffset',
-       'zoom_factor_minus',
-       'zoom_factor_plus',
-       'zoom_factor_reset',
-       'ZoomFirstPerson',
-       'ZoomMax',
-       'ZoomMin',
-       'ZoomRate',
-    ]
+    class Key(Enum):
+       abandon = 'abandon'
+       Acceleration = 'Acceleration'
+       Acceleraton = 'Acceleraton'
+       AcquiredTargetSound = 'AcquiredTargetSound'
+       ActiveRotateNode = 'ActiveRotateNode'
+       ActiveSpinNode = 'ActiveSpinNode'
+       AddHealth = 'AddHealth'
+       AddonAttachJoint = 'AddonAttachJoint'
+       AddShield = 'AddShield'
+       AddShieldOff = 'AddShieldOff'
+       AddSpringBody = 'AddSpringBody'
+       AfterburnerOffSound = 'AfterburnerOffSound'
+       AfterburnerOnSound = 'AfterburnerOnSound'
+       AfterburnerSpeed = 'AfterburnerSpeed'
+       AIDriverGetInSound = 'AIDriverGetInSound'
+       AIDriverGetOutSound = 'AIDriverGetOutSound'
+       AIFieldFollowSound = 'AIFieldFollowSound'
+       AIFieldHoldSound = 'AIFieldHoldSound'
+       AIFieldMoveOutSound = 'AIFieldMoveOutSound'
+       AIGunnerAllClearSound = 'AIGunnerAllClearSound'
+       AIGunnerGetInSound = 'AIGunnerGetInSound'
+       AIGunnerGetOutSound = 'AIGunnerGetOutSound'
+       AIGunnerSteadySound = 'AIGunnerSteadySound'
+       AimAzimuth = 'AimAzimuth'
+       AimDistance = 'AimDistance'
+       AimElevation = 'AimElevation'
+       AimerNodeName = 'AimerNodeName'
+       AimerPitchLimits = 'AimerPitchLimits'
+       AimerPitchLimts = 'AimerPitchLimts'
+       AimerYawLimits = 'AimerYawLimits'
+       AimerYawLimts = 'AimerYawLimts'
+       AimFactorMove = 'AimFactorMove'
+       AimFactorPostureCrouch = 'AimFactorPostureCrouch'
+       AimFactorPostureProne = 'AimFactorPostureProne'
+       AimFactorPostureSpecial = 'AimFactorPostureSpecial'
+       AimFactorPostureStand = 'AimFactorPostureStand'
+       AimFactorStrafe = 'AimFactorStrafe'
+       AimTension = 'AimTension'
+       AimValue = 'AimValue'
+       AIPassengerGetInSound = 'AIPassengerGetInSound'
+       AIPassengerGetOutSound = 'AIPassengerGetOutSound'
+       AIPassengerMoveOutSound = 'AIPassengerMoveOutSound'
+       AIPassengerStopSound = 'AIPassengerStopSound'
+       AIResponseNosirSound = 'AIResponseNosirSound'
+       AIResponseYessirSound = 'AIResponseYessirSound'
+       AISCDriverGetInSound = 'AISCDriverGetInSound'
+       AISCDriverGetOutSound = 'AISCDriverGetOutSound'
+       AISCFieldFollowSound = 'AISCFieldFollowSound'
+       AISCFieldHoldSound = 'AISCFieldHoldSound'
+       AISCFieldMoveOutSound = 'AISCFieldMoveOutSound'
+       AISCGunnerAllClearSound = 'AISCGunnerAllClearSound'
+       AISCGunnerGetInSound = 'AISCGunnerGetInSound'
+       AISCGunnerGetOutSound = 'AISCGunnerGetOutSound'
+       AISCGunnerSteadySound = 'AISCGunnerSteadySound'
+       AISCPassengerGetInSound = 'AISCPassengerGetInSound'
+       AISCPassengerGetOutSound = 'AISCPassengerGetOutSound'
+       AISCPassengerMoveOutSound = 'AISCPassengerMoveOutSound'
+       AISCPassengerStopSound = 'AISCPassengerStopSound'
+       AISCResponseNosirSound = 'AISCResponseNosirSound'
+       AISCResponseYessirSound = 'AISCResponseYessirSound'
+       AISizeType = 'AISizeType'
+       AlignVertical = 'AlignVertical'
+       AllMusic = 'AllMusic'
+       AllyCount = 'AllyCount'
+       AllyPath = 'AllyPath'
+       Alpha = 'Alpha'
+       Ambient2Sound = 'Ambient2Sound'
+       AmbientSound = 'AmbientSound'
+       AnimalHealth = 'AnimalHealth'
+       AnimalScale = 'AnimalScale'
+       AnimatedAddon = 'AnimatedAddon'
+       AnimatedPilotPosition = 'AnimatedPilotPosition'
+       Animation = 'Animation'
+       AnimationAddon = 'AnimationAddon'
+       AnimationBank = 'AnimationBank'
+       AnimationExtraFile = 'AnimationExtraFile'
+       AnimationLowRes = 'AnimationLowRes'
+       AnimationName = 'AnimationName'
+       AnimationTrigger = 'AnimationTrigger'
+       ApproachingTargetSound = 'ApproachingTargetSound'
+       ArmName = 'ArmName'
+       ArmorScale = 'ArmorScale'
+       AttachDynamic = 'AttachDynamic'
+       AttachedMesh = 'AttachedMesh'
+       AttachEffect = 'AttachEffect'
+       AttachOdf = 'AttachOdf'
+       AttachToHardpoint = 'AttachToHardpoint'
+       AttachToHardPoint = 'AttachToHardPoint'
+       AttachTrigger = 'AttachTrigger'
+       AutoAimSize = 'AutoAimSize'
+       AutoAimYLimits = 'AutoAimYLimits'
+       AutoFire = 'AutoFire'
+       AvailableForAnyTeam = 'AvailableForAnyTeam'
+       BallAcceleration = 'BallAcceleration'
+       BallCollision = 'BallCollision'
+       BallLowResModel = 'BallLowResModel'
+       BallMaxLean = 'BallMaxLean'
+       BallMinMoveSpeed = 'BallMinMoveSpeed'
+       BallMoveSpeed = 'BallMoveSpeed'
+       BallMoveThreshold = 'BallMoveThreshold'
+       BallRadius = 'BallRadius'
+       BallRollingFriction = 'BallRollingFriction'
+       BallSlippage = 'BallSlippage'
+       BallTurnSpeed = 'BallTurnSpeed'
+       BallWaterDamageHeight = 'BallWaterDamageHeight'
+       BankAngle = 'BankAngle'
+       BankFilter = 'BankFilter'
+       BarrelLength = 'BarrelLength'
+       BarrelNodeName = 'BarrelNodeName'
+       BarrelRecoil = 'BarrelRecoil'
+       BeamIntensity = 'BeamIntensity'
+       BlurEffect = 'BlurEffect'
+       BlurLength = 'BlurLength'
+       BlurStart = 'BlurStart'
+       BodyOmegaXSpringFactor = 'BodyOmegaXSpringFactor'
+       BodySpringLength = 'BodySpringLength'
+       BoostSound = 'BoostSound'
+       BoxSize = 'BoxSize'
+       BuildAnimation = 'BuildAnimation'
+       BuildingAmmo = 'BuildingAmmo'
+       BuildingBuild = 'BuildingBuild'
+       BuildingCollision = 'BuildingCollision'
+       BuildingCollisionPrim = 'BuildingCollisionPrim'
+       BuildingHealth = 'BuildingHealth'
+       BuildingRebuild = 'BuildingRebuild'
+       BuildingScale = 'BuildingScale'
+       BUILDINGSECTION = 'BUILDINGSECTION'
+       BuildModelOdf = 'BuildModelOdf'
+       BuildPoint = 'BuildPoint'
+       BuiltCollision = 'BuiltCollision'
+       BuiltSound = 'BuiltSound'
+       CableLength = 'CableLength'
+       CameraDistance = 'CameraDistance'
+       CameraHeight = 'CameraHeight'
+       CAMERASECTION = 'CAMERASECTION'
+       CanDeflect = 'CanDeflect'
+       CapturedSound = 'CapturedSound'
+       CapturePosts = 'CapturePosts'
+       CaptureRegion = 'CaptureRegion'
+       CaptureTime = 'CaptureTime'
+       CargoNodeName = 'CargoNodeName'
+       ChangeModeSound = 'ChangeModeSound'
+       ChargeDelayHeavy = 'ChargeDelayHeavy'
+       ChargeDelayLight = 'ChargeDelayLight'
+       ChargeRateHeavy = 'ChargeRateHeavy'
+       ChargeRateLight = 'ChargeRateLight'
+       ChargeSound = 'ChargeSound'
+       ChargeSoundPitch = 'ChargeSoundPitch'
+       ChargeUpEffect = 'ChargeUpEffect'
+       ChunkAngularDamping = 'ChunkAngularDamping'
+       ChunkBounciness = 'ChunkBounciness'
+       ChunkDeathSpeed = 'ChunkDeathSpeed'
+       ChunkFrequency = 'ChunkFrequency'
+       ChunkGeometryName = 'ChunkGeometryName'
+       ChunkLinearDamping = 'ChunkLinearDamping'
+       ChunkNodeName = 'ChunkNodeName'
+       ChunkOmega = 'ChunkOmega'
+       ChunkPhysics = 'ChunkPhysics'
+       CHUNKSECTION = 'CHUNKSECTION'
+       ChunkSimpleFriction = 'ChunkSimpleFriction'
+       ChunkSmokeEffect = 'ChunkSmokeEffect'
+       ChunkSmokeNodeName = 'ChunkSmokeNodeName'
+       ChunkSpeed = 'ChunkSpeed'
+       ChunkStartDistance = 'ChunkStartDistance'
+       ChunkStickiness = 'ChunkStickiness'
+       ChunkTerrainCollisions = 'ChunkTerrainCollisions'
+       ChunkTerrainEffect = 'ChunkTerrainEffect'
+       ChunkTrailEffect = 'ChunkTrailEffect'
+       ChunkUpFactor = 'ChunkUpFactor'
+       ChunkVelocityFactor = 'ChunkVelocityFactor'
+       CisMusic = 'CisMusic'
+       CISMusic = 'CISMusic'
+       ClankLeftRunSound = 'ClankLeftRunSound'
+       ClankLeftWalkSound = 'ClankLeftWalkSound'
+       ClankRightRunSound = 'ClankRightRunSound'
+       ClankRightWalkSound = 'ClankRightWalkSound'
+       ClassAllATK = 'ClassAllATK'
+       ClassAllDEF = 'ClassAllDEF'
+       ClassCISATK = 'ClassCISATK'
+       ClassCISDEF = 'ClassCISDEF'
+       ClassHisATK = 'ClassHisATK'
+       ClassHisDEF = 'ClassHisDEF'
+       ClassImpATK = 'ClassImpATK'
+       ClassImpDEF = 'ClassImpDEF'
+       classLabel = 'classLabel'
+       ClassLabel = 'ClassLabel'
+       ClassLocATK = 'ClassLocATK'
+       ClassLocDEF = 'ClassLocDEF'
+       ClassRepATK = 'ClassRepATK'
+       ClassRepDEF = 'ClassRepDEF'
+       CloseSound = 'CloseSound'
+       ClothingRustleSound = 'ClothingRustleSound'
+       cmd_lclick = 'cmd_lclick'
+       cmd_lhold = 'cmd_lhold'
+       cmd_rclick = 'cmd_rclick'
+       cmd_rhold = 'cmd_rhold'
+       CockedAngle = 'CockedAngle'
+       CockpitChatterStream = 'CockpitChatterStream'
+       CockpitTension = 'CockpitTension'
+       CodeInitialWidth = 'CodeInitialWidth'
+       Collision = 'Collision'
+       COLLISION = 'COLLISION'
+       CollisionInflict = 'CollisionInflict'
+       CollisionLowResRootScale = 'CollisionLowResRootScale'
+       collisionName = 'collisionName'
+       CollisionOtherSound = 'CollisionOtherSound'
+       CollisionRootScale = 'CollisionRootScale'
+       CollisionScale = 'CollisionScale'
+       CollisionSound = 'CollisionSound'
+       CollisionThreshold = 'CollisionThreshold'
+       Color = 'Color'
+       ConeAngle = 'ConeAngle'
+       ConeFadeFactor = 'ConeFadeFactor'
+       ConeFadeLength = 'ConeFadeLength'
+       ConeHeight = 'ConeHeight'
+       ConeInitialWidth = 'ConeInitialWidth'
+       ConeLength = 'ConeLength'
+       ConeWidth = 'ConeWidth'
+       Controllable = 'Controllable'
+       ControlRegion = 'ControlRegion'
+       ControlZone = 'ControlZone'
+       CrouchMoveSpread = 'CrouchMoveSpread'
+       CrouchStillSpread = 'CrouchStillSpread'
+       Damage = 'Damage'
+       DamageAttachPoint = 'DamageAttachPoint'
+       DamageDeduction = 'DamageDeduction'
+       DamageEffect = 'DamageEffect'
+       DamageEffectScale = 'DamageEffectScale'
+       DamageInheritVelocity = 'DamageInheritVelocity'
+       DamageRadius = 'DamageRadius'
+       DamageRadiusInner = 'DamageRadiusInner'
+       DamageRadiusOuter = 'DamageRadiusOuter'
+       DamageStartPercent = 'DamageStartPercent'
+       DamageStopPercent = 'DamageStopPercent'
+       DamageThreshold = 'DamageThreshold'
+       DarknessMax = 'DarknessMax'
+       DarknessMin = 'DarknessMin'
+       DeathAnimation = 'DeathAnimation'
+       DeathAnimationExplosion = 'DeathAnimationExplosion'
+       DeathAnimationExplosionTime = 'DeathAnimationExplosionTime'
+       DeathDustDelay = 'DeathDustDelay'
+       DeathDustEffect = 'DeathDustEffect'
+       DeathDustOffset = 'DeathDustOffset'
+       DeathEffect = 'DeathEffect'
+       DeathEffectOffset = 'DeathEffectOffset'
+       DeathOnCollision = 'DeathOnCollision'
+       DeathShakeDelay = 'DeathShakeDelay'
+       DeathShakeDuration = 'DeathShakeDuration'
+       DeathShakeForce = 'DeathShakeForce'
+       DeathShakeRadius = 'DeathShakeRadius'
+       DeathSound = 'DeathSound'
+       DeathTime = 'DeathTime'
+       Decal = 'Decal'
+       DecayTime = 'DecayTime'
+       Deceleration = 'Deceleration'
+       DeflectSound = 'DeflectSound'
+       DenyFlyerLand = 'DenyFlyerLand'
+       deploy = 'deploy'
+       DestroyedGeometryName = 'DestroyedGeometryName'
+       DetatchSound = 'DetatchSound'
+       DisableForCloneWars = 'DisableForCloneWars'
+       DisableTime = 'DisableTime'
+       Discharge = 'Discharge'
+       DischargeSound = 'DischargeSound'
+       DisguiseOwnerModel = 'DisguiseOwnerModel'
+       DisputeSound = 'DisputeSound'
+       DroidHealth = 'DroidHealth'
+       DroidScale = 'DroidScale'
+       DropItemClass = 'DropItemClass'
+       DropItemProbability = 'DropItemProbability'
+       DropShadowSize = 'DropShadowSize'
+       Effect = 'Effect'
+       EffectRegion = 'EffectRegion'
+       eject = 'eject'
+       Emitter = 'Emitter'
+       EnableDeathExplosions = 'EnableDeathExplosions'
+       EnemyColor = 'EnemyColor'
+       EngineSound = 'EngineSound'
+       ExpireEffect = 'ExpireEffect'
+       ExpireTimeEnemy = 'ExpireTimeEnemy'
+       ExpireTimeField = 'ExpireTimeField'
+       Explosion = 'Explosion'
+       ExplosionClass = 'ExplosionClass'
+       ExplosionCritical = 'ExplosionCritical'
+       ExplosionDeath = 'ExplosionDeath'
+       ExplosionDestruct = 'ExplosionDestruct'
+       ExplosionExpire = 'ExplosionExpire'
+       ExplosionImpact = 'ExplosionImpact'
+       ExplosionName = 'ExplosionName'
+       ExplosionOffset = 'ExplosionOffset'
+       ExplosionTrigger = 'ExplosionTrigger'
+       ExtremeRange = 'ExtremeRange'
+       EyePointCenter = 'EyePointCenter'
+       EyePointOffset = 'EyePointOffset'
+       FadeOutTime = 'FadeOutTime'
+       FinalExplosion = 'FinalExplosion'
+       FinalExplosionOffset = 'FinalExplosionOffset'
+       FinAnimation = 'FinAnimation'
+       FireAnim = 'FireAnim'
+       FireEmptySound = 'FireEmptySound'
+       FireLoopSound = 'FireLoopSound'
+       FireNodeName = 'FireNodeName'
+       FireOutsideLimits = 'FireOutsideLimits'
+       FirePoint = 'FirePoint'
+       FirePointName = 'FirePointName'
+       FireSound = 'FireSound'
+       FireSoundStop = 'FireSoundStop'
+       FireStateTime = 'FireStateTime'
+       FireVelocity = 'FireVelocity'
+       FirstPerson = 'FirstPerson'
+       FirstPersonFOV = 'FirstPersonFOV'
+       FirstRadius = 'FirstRadius'
+       FlareAngle = 'FlareAngle'
+       FlareIntensity = 'FlareIntensity'
+       FlashColor = 'FlashColor'
+       FlashLength = 'FlashLength'
+       FlashLightColor = 'FlashLightColor'
+       FlashLightDuration = 'FlashLightDuration'
+       FlashLightRadius = 'FlashLightRadius'
+       FlatCount = 'FlatCount'
+       FlatFaceFactor = 'FlatFaceFactor'
+       FlatGrassSwing = 'FlatGrassSwing'
+       FlatHeight = 'FlatHeight'
+       FlatSizeMultiplier = 'FlatSizeMultiplier'
+       FleeSound = 'FleeSound'
+       FlickerPeriod = 'FlickerPeriod'
+       FlickerType = 'FlickerType'
+       FlyerBan = 'FlyerBan'
+       FLYERSECTION = 'FLYERSECTION'
+       FoleyFXClass = 'FoleyFXClass'
+       FoleyFXGroup = 'FoleyFXGroup'
+       FootBoneLeft = 'FootBoneLeft'
+       FootBoneRight = 'FootBoneRight'
+       Footstep0Sound = 'Footstep0Sound'
+       Footstep1Sound = 'Footstep1Sound'
+       Footstep2Sound = 'Footstep2Sound'
+       FootstepSound0 = 'FootstepSound0'
+       FootstepSound1 = 'FootstepSound1'
+       FootStepSound1 = 'FootStepSound1'
+       FootstepSound2 = 'FootstepSound2'
+       FootStepSound2 = 'FootStepSound2'
+       FootstepSound3 = 'FootstepSound3'
+       FootstepSound4 = 'FootstepSound4'
+       FootstepSound5 = 'FootstepSound5'
+       FootWaterSplashEffect = 'FootWaterSplashEffect'
+       ForceFireAnimation = 'ForceFireAnimation'
+       ForceMode = 'ForceMode'
+       ForwardSpeed = 'ForwardSpeed'
+       ForwardTurnSpeed = 'ForwardTurnSpeed'
+       Friction = 'Friction'
+       FriendlyColor = 'FriendlyColor'
+       frontal_target = 'frontal_target'
+       FXName = 'FXName'
+       GeometryAddon = 'GeometryAddon'
+       GeometryColorMax = 'GeometryColorMax'
+       GeometryColorMin = 'GeometryColorMin'
+       GeometryLowRes = 'GeometryLowRes'
+       geometryName = 'geometryName'
+       GeometryName = 'GeometryName'
+       geometryScale = 'geometryScale'
+       GeometryScale = 'GeometryScale'
+       GlowLength = 'GlowLength'
+       Gravity = 'Gravity'
+       GravityScale = 'GravityScale'
+       GroundedHeight = 'GroundedHeight'
+       GroundedSound = 'GroundedSound'
+       HealthScale = 'HealthScale'
+       HealthSScale = 'HealthSScale'
+       HealthStatusTexture = 'HealthStatusTexture'
+       HealthTexture = 'HealthTexture'
+       Healthtype = 'Healthtype'
+       HealthType = 'HealthType'
+       HeardEnemySound = 'HeardEnemySound'
+       HeatPerShot = 'HeatPerShot'
+       HeatRecoverRate = 'HeatRecoverRate'
+       HeatThreshold = 'HeatThreshold'
+       Height = 'Height'
+       HeightScale = 'HeightScale'
+       HideHealthBar = 'HideHealthBar'
+       HideOnFire = 'HideOnFire'
+       HideUnbuiltModel = 'HideUnbuiltModel'
+       HidingSound = 'HidingSound'
+       HierarchyLevel = 'HierarchyLevel'
+       HighResGeometry = 'HighResGeometry'
+       HitLocation = 'HitLocation'
+       HitSound = 'HitSound'
+       HoloBeamIntensity = 'HoloBeamIntensity'
+       HoloFadeInTime = 'HoloFadeInTime'
+       HoloFlareIntensity = 'HoloFlareIntensity'
+       HoloFlickerAlphaMax = 'HoloFlickerAlphaMax'
+       HoloFlickerAlphaMin = 'HoloFlickerAlphaMin'
+       HoloFlickerRate = 'HoloFlickerRate'
+       HoloHeight = 'HoloHeight'
+       HoloImageGeometry = 'HoloImageGeometry'
+       HoloImageIntensity = 'HoloImageIntensity'
+       HoloLightIntensity = 'HoloLightIntensity'
+       HoloLightRadius = 'HoloLightRadius'
+       HoloOdf = 'HoloOdf'
+       HoloPopRate = 'HoloPopRate'
+       HoloRotateRate = 'HoloRotateRate'
+       HoloSize = 'HoloSize'
+       HoloTurnOnTime = 'HoloTurnOnTime'
+       HoloType = 'HoloType'
+       HoloVisibleDistance = 'HoloVisibleDistance'
+       HorizontalSpread = 'HorizontalSpread'
+       HoverBan = 'HoverBan'
+       HugeBan = 'HugeBan'
+       HurtSound = 'HurtSound'
+       HydraulicLowerHeight = 'HydraulicLowerHeight'
+       HydraulicLowerSound = 'HydraulicLowerSound'
+       HydraulicSound = 'HydraulicSound'
+       HydraulicSoundHeight = 'HydraulicSoundHeight'
+       IconStatusTexture = 'IconStatusTexture'
+       IconTexture = 'IconTexture'
+       IdleAnimation = 'IdleAnimation'
+       IdleDelay = 'IdleDelay'
+       IdleRotateSpeed = 'IdleRotateSpeed'
+       IdleWaitTime = 'IdleWaitTime'
+       IdleWobbleFactor = 'IdleWobbleFactor'
+       IdleWobbleLeftFoot = 'IdleWobbleLeftFoot'
+       IdleWobbleNode = 'IdleWobbleNode'
+       IdleWobbleRightFoot = 'IdleWobbleRightFoot'
+       IgnorableCollsion = 'IgnorableCollsion'
+       ImpactEffect = 'ImpactEffect'
+       ImpactEffectRigid = 'ImpactEffectRigid'
+       ImpactEffectShield = 'ImpactEffectShield'
+       ImpactEffectSoft = 'ImpactEffectSoft'
+       ImpactEffectStatic = 'ImpactEffectStatic'
+       ImpactEffectTerrain = 'ImpactEffectTerrain'
+       ImpactEffectWater = 'ImpactEffectWater'
+       ImpMusic = 'ImpMusic'
+       InitialCableLength = 'InitialCableLength'
+       InitialSalvoDelay = 'InitialSalvoDelay'
+       InputSystem = 'InputSystem'
+       InstanceProperties = 'InstanceProperties'
+       IsPilotExposed = 'IsPilotExposed'
+       JetDuration = 'JetDuration'
+       JetEffect = 'JetEffect'
+       JetFuelCost = 'JetFuelCost'
+       JetFuelInitialCost = 'JetFuelInitialCost'
+       JetFuelMinBorder = 'JetFuelMinBorder'
+       JetFuelRechargeRate = 'JetFuelRechargeRate'
+       JetJump = 'JetJump'
+       JetPush = 'JetPush'
+       JetType = 'JetType'
+       jump = 'jump'
+       JumpDeduction = 'JumpDeduction'
+       JumpSound = 'JumpSound'
+       KickBuildup = 'KickBuildup'
+       KickSpread = 'KickSpread'
+       KickStrength = 'KickStrength'
+       KillRegion = 'KillRegion'
+       KillSoldierSound = 'KillSoldierSound'
+       Label = 'Label'
+       LandedHeight = 'LandedHeight'
+       LandingSpeed = 'LandingSpeed'
+       LandingTime = 'LandingTime'
+       LandSound = 'LandSound'
+       LaserGlowColor = 'LaserGlowColor'
+       LaserLength = 'LaserLength'
+       LaserTexture = 'LaserTexture'
+       LaserWidth = 'LaserWidth'
+       LeftFootstepSound = 'LeftFootstepSound'
+       LegBoneLeft = 'LegBoneLeft'
+       LegBoneRight = 'LegBoneRight'
+       LegBoneTopLeft = 'LegBoneTopLeft'
+       LegBoneTopRight = 'LegBoneTopRight'
+       LegPairCount = 'LegPairCount'
+       LegRayHitLength = 'LegRayHitLength'
+       LevelDamp = 'LevelDamp'
+       LevelFilter = 'LevelFilter'
+       LevelSpring = 'LevelSpring'
+       Lifespan = 'Lifespan'
+       LifeSpan = 'LifeSpan'
+       LiftDamp = 'LiftDamp'
+       LiftSpring = 'LiftSpring'
+       LightColor = 'LightColor'
+       LightDuration = 'LightDuration'
+       Lighting = 'Lighting'
+       LightningEffect = 'LightningEffect'
+       LightRadius = 'LightRadius'
+       lights = 'lights'
+       LocalsColor = 'LocalsColor'
+       LockedOnSound = 'LockedOnSound'
+       LockedSound = 'LockedSound'
+       LockOffAngle = 'LockOffAngle'
+       lockOnAngle = 'lockOnAngle'
+       LockOnAngle = 'LockOnAngle'
+       LockOnRange = 'LockOnRange'
+       LockOnTime = 'LockOnTime'
+       LockTime = 'LockTime'
+       LostSound = 'LostSound'
+       LowHealthSound = 'LowHealthSound'
+       LowHealthThreshold = 'LowHealthThreshold'
+       LowResModel = 'LowResModel'
+       MapScale = 'MapScale'
+       MapTexture = 'MapTexture'
+       MaxAlpha = 'MaxAlpha'
+       MaxBallAngle = 'MaxBallAngle'
+       MaxChargeStrengthHeavy = 'MaxChargeStrengthHeavy'
+       MaxChargeStrengthLight = 'MaxChargeStrengthLight'
+       MaxDamage = 'MaxDamage'
+       MaxDelayHeavy = 'MaxDelayHeavy'
+       MaxDelayLight = 'MaxDelayLight'
+       MaxDistance = 'MaxDistance'
+       MaxFallingLeaves = 'MaxFallingLeaves'
+       MaxHealth = 'MaxHealth'
+       MaxHeavy = 'MaxHeavy'
+       MaxHeavyDecay = 'MaxHeavyDecay'
+       MaxInterval = 'MaxInterval'
+       MaxItems = 'MaxItems'
+       MaxJumpDistance = 'MaxJumpDistance'
+       MaxLifetime = 'MaxLifetime'
+       MaxLifeTime = 'MaxLifeTime'
+       MaxLight = 'MaxLight'
+       MaxLightDecay = 'MaxLightDecay'
+       MaxPitchSpeed = 'MaxPitchSpeed'
+       MaxPos = 'MaxPos'
+       MaxPressedTime = 'MaxPressedTime'
+       MaxPush = 'MaxPush'
+       MaxRange = 'MaxRange'
+       MaxScatterBirds = 'MaxScatterBirds'
+       MaxShakeAmt = 'MaxShakeAmt'
+       MaxShakeLen = 'MaxShakeLen'
+       MaxShield = 'MaxShield'
+       MaxSize = 'MaxSize'
+       MaxSkew = 'MaxSkew'
+       MaxSpeed = 'MaxSpeed'
+       MaxSpread = 'MaxSpread'
+       MaxStrafeSpeed = 'MaxStrafeSpeed'
+       MaxStrength = 'MaxStrength'
+       MaxTargets = 'MaxTargets'
+       MaxTerrainAngle = 'MaxTerrainAngle'
+       MaxTimeLeftHeavy = 'MaxTimeLeftHeavy'
+       MaxTimeLeftLight = 'MaxTimeLeftLight'
+       MaxTurnSpeed = 'MaxTurnSpeed'
+       MaxVel = 'MaxVel'
+       MaxYawSpeed = 'MaxYawSpeed'
+       MediumBan = 'MediumBan'
+       MidSpeed = 'MidSpeed'
+       MinAlpha = 'MinAlpha'
+       MinDamage = 'MinDamage'
+       MinDelayHeavy = 'MinDelayHeavy'
+       MinDelayLight = 'MinDelayLight'
+       MinDistance = 'MinDistance'
+       MinEnemyRadius = 'MinEnemyRadius'
+       MinHeavy = 'MinHeavy'
+       MinHeavyDecay = 'MinHeavyDecay'
+       MinInterval = 'MinInterval'
+       MinLifetime = 'MinLifetime'
+       MinLifeTime = 'MinLifeTime'
+       MinLight = 'MinLight'
+       MinLightDecay = 'MinLightDecay'
+       MinPos = 'MinPos'
+       MinPush = 'MinPush'
+       MinRange = 'MinRange'
+       MinShakeAmt = 'MinShakeAmt'
+       MinShakeLen = 'MinShakeLen'
+       MinSize = 'MinSize'
+       MinSpeed = 'MinSpeed'
+       MinSpread = 'MinSpread'
+       MinStrength = 'MinStrength'
+       MinTimeLeftHeavy = 'MinTimeLeftHeavy'
+       MinTimeLeftLight = 'MinTimeLeftLight'
+       MinVel = 'MinVel'
+       ModeTexture = 'ModeTexture'
+       ModeTextureColor = 'ModeTextureColor'
+       MountPos = 'MountPos'
+       MoveTension = 'MoveTension'
+       MoveTensionX = 'MoveTensionX'
+       MoveTensionY = 'MoveTensionY'
+       MoveTensionZ = 'MoveTensionZ'
+       MovingTurnOnly = 'MovingTurnOnly'
+       Music = 'Music'
+       MusicDelay = 'MusicDelay'
+       MusicSpeed = 'MusicSpeed'
+       MuzzleFlash = 'MuzzleFlash'
+       MuzzleFlashEffect = 'MuzzleFlashEffect'
+       NeutralColor = 'NeutralColor'
+       NeutralizeTime = 'NeutralizeTime'
+       NextAimer = 'NextAimer'
+       NextBarrel = 'NextBarrel'
+       NextCharge = 'NextCharge'
+       NEXTCHARGE = 'NEXTCHARGE'
+       NextDropItem = 'NextDropItem'
+       NoCombatInterrupt = 'NoCombatInterrupt'
+       NoDeathExplosions = 'NoDeathExplosions'
+       NoEnterVehicles = 'NoEnterVehicles'
+       NoRandomSpring = 'NoRandomSpring'
+       NormalDirection = 'NormalDirection'
+       NumChunks = 'NumChunks'
+       NumDustObjectsInEffects = 'NumDustObjectsInEffects'
+       NumParticles = 'NumParticles'
+       NumParts = 'NumParts'
+       NumRays = 'NumRays'
+       NumVisible = 'NumVisible'
+       Odf = 'Odf'
+       Offset = 'Offset'
+       OmegaXDamp = 'OmegaXDamp'
+       OmegaXSpring = 'OmegaXSpring'
+       OmegaZDamp = 'OmegaZDamp'
+       OmegaZSpring = 'OmegaZSpring'
+       OmniLightRadius = 'OmniLightRadius'
+       OmniRadius = 'OmniRadius'
+       OpenSound = 'OpenSound'
+       OptimalRange = 'OptimalRange'
+       OrdnanceClass = 'OrdnanceClass'
+       Ordnancecollision = 'Ordnancecollision'
+       OrdnanceCollision = 'OrdnanceCollision'
+       OrdnanceCollisionPrim = 'OrdnanceCollisionPrim'
+       OrdnanceEffect = 'OrdnanceEffect'
+       OrdnanceGeometryName = 'OrdnanceGeometryName'
+       OrdnanceName = 'OrdnanceName'
+       OrdnanceSound = 'OrdnanceSound'
+       OverheatSound = 'OverheatSound'
+       OverheatSoundPitch = 'OverheatSoundPitch'
+       OverheatStopSound = 'OverheatStopSound'
+       OverrideTexture = 'OverrideTexture'
+       OverrideTexture2 = 'OverrideTexture2'
+       PCaxPitchSpeed = 'PCaxPitchSpeed'
+       PCMaxPitchSpeed = 'PCMaxPitchSpeed'
+       PCMaxStrafeSpeed = 'PCMaxStrafeSpeed'
+       PCMaxTurnSpeed = 'PCMaxTurnSpeed'
+       PCMaxYawSpeed = 'PCMaxYawSpeed'
+       PCPitchRate = 'PCPitchRate'
+       PCPitchSpeed = 'PCPitchSpeed'
+       PCPitchTurnFactor = 'PCPitchTurnFactor'
+       PCSpinRate = 'PCSpinRate'
+       PCTurnRate = 'PCTurnRate'
+       PCTurnSpeed = 'PCTurnSpeed'
+       PCYawTurnFactor = 'PCYawTurnFactor'
+       PersonHealth = 'PersonHealth'
+       PersonScale = 'PersonScale'
+       Pilot9Pose = 'Pilot9Pose'
+       PilotAnimation = 'PilotAnimation'
+       PilotPosition = 'PilotPosition'
+       PilotSkillRepairScale = 'PilotSkillRepairScale'
+       PilotType = 'PilotType'
+       pitch_down = 'pitch_down'
+       pitch_up = 'pitch_up'
+       pitch = 'pitch'
+       PitchDamp = 'PitchDamp'
+       PitchFilter = 'PitchFilter'
+       PitchLimits = 'PitchLimits'
+       PitchRate = 'PitchRate'
+       PitchSpread = 'PitchSpread'
+       PitchTurnFactor = 'PitchTurnFactor'
+       PowerupDelay = 'PowerupDelay'
+       Powerupsound = 'Powerupsound'
+       PPitchRate = 'PPitchRate'
+       PreparingForDamageSound = 'PreparingForDamageSound'
+       PrimaryWeapon = 'PrimaryWeapon'
+       ProneMoveSpread = 'ProneMoveSpread'
+       ProneSound = 'ProneSound'
+       ProneStillSpread = 'ProneStillSpread'
+       Push = 'Push'
+       PushDeduction = 'PushDeduction'
+       PushRadius = 'PushRadius'
+       PushRadiusInner = 'PushRadiusInner'
+       PushRadiusOuter = 'PushRadiusOuter'
+       Radius = 'Radius'
+       RadiusFadeMax = 'RadiusFadeMax'
+       RadiusFadeMin = 'RadiusFadeMin'
+       Range = 'Range'
+       RayRadius = 'RayRadius'
+       RayTriggerMinSpeed = 'RayTriggerMinSpeed'
+       RayTriggerWidth = 'RayTriggerWidth'
+       Rebound = 'Rebound'
+       RecoilDecayHeavy = 'RecoilDecayHeavy'
+       RecoilDecayLight = 'RecoilDecayLight'
+       RecoilDelayHeavy = 'RecoilDelayHeavy'
+       RecoilDelayLight = 'RecoilDelayLight'
+       RecoilLengthHeavy = 'RecoilLengthHeavy'
+       RecoilLengthLight = 'RecoilLengthLight'
+       RecoilStrengthHeavy = 'RecoilStrengthHeavy'
+       RecoilStrengthLight = 'RecoilStrengthLight'
+       RefillFromItem = 'RefillFromItem'
+       ReloadSound = 'ReloadSound'
+       ReloadTime = 'ReloadTime'
+       RepMusic = 'RepMusic'
+       ReserveOneForPlayer = 'ReserveOneForPlayer'
+       ResetTeam = 'ResetTeam'
+       RespawnTime = 'RespawnTime'
+       RestDir = 'RestDir'
+       ReticuleTexture = 'ReticuleTexture'
+       ReverseSpeed = 'ReverseSpeed'
+       RightFootstepSound = 'RightFootstepSound'
+       RollSound = 'RollSound'
+       Rotation = 'Rotation'
+       RotationRate = 'RotationRate'
+       RotationVelocity = 'RotationVelocity'
+       RoundDelay = 'RoundDelay'
+       RoundsPerClip = 'RoundsPerClip'
+       RoundsPersalvo = 'RoundsPersalvo'
+       RoundsPerSalvo = 'RoundsPerSalvo'
+       SalvoCount = 'SalvoCount'
+       SalvoDelay = 'SalvoDelay'
+       SalvoTime = 'SalvoTime'
+       ScanningRange = 'ScanningRange'
+       ScatterDistance = 'ScatterDistance'
+       SCDriverGetInSound = 'SCDriverGetInSound'
+       SCDriverGetOutSound = 'SCDriverGetOutSound'
+       SCFieldFollowSound = 'SCFieldFollowSound'
+       SCFieldHoldSound = 'SCFieldHoldSound'
+       SCFieldMoveOutSound = 'SCFieldMoveOutSound'
+       SCGunnerAllClearSound = 'SCGunnerAllClearSound'
+       SCGunnerGetInSound = 'SCGunnerGetInSound'
+       SCGunnerGetOutSound = 'SCGunnerGetOutSound'
+       SCGunnerSteadySound = 'SCGunnerSteadySound'
+       ScopeTexture = 'ScopeTexture'
+       SCPassengerGetInSound = 'SCPassengerGetInSound'
+       SCPassengerGetOutSound = 'SCPassengerGetOutSound'
+       SCPassengerMoveOutSound = 'SCPassengerMoveOutSound'
+       SCPassengerStopSound = 'SCPassengerStopSound'
+       SCResponseNosirSound = 'SCResponseNosirSound'
+       SCResponseYessirSound = 'SCResponseYessirSound'
+       SecondaryWeapon = 'SecondaryWeapon'
+       Seed = 'Seed'
+       SelfDestructSoundPitch = 'SelfDestructSoundPitch'
+       SetAltitude = 'SetAltitude'
+       Shake = 'Shake'
+       ShakeLength = 'ShakeLength'
+       ShakeRadius = 'ShakeRadius'
+       ShakeRadiusInner = 'ShakeRadiusInner'
+       ShakeRadiusOuter = 'ShakeRadiusOuter'
+       ShieldEffect = 'ShieldEffect'
+       ShieldOffset = 'ShieldOffset'
+       ShieldOffSound = 'ShieldOffSound'
+       ShieldRadius = 'ShieldRadius'
+       ShieldScale = 'ShieldScale'
+       ShieldSound = 'ShieldSound'
+       ShockFadeInTime = 'ShockFadeInTime'
+       ShockFadeOutGain = 'ShockFadeOutGain'
+       ShockFadeOutTime = 'ShockFadeOutTime'
+       ShockSound = 'ShockSound'
+       shotdelay = 'shotdelay'
+       ShotDelay = 'ShotDelay'
+       ShotElevate = 'ShotElevate'
+       ShotPatternCount = 'ShotPatternCount'
+       ShotPatternPitchYaw = 'ShotPatternPitchYaw'
+       ShotsPerSalvo = 'ShotsPerSalvo'
+       SkeletonLowRes = 'SkeletonLowRes'
+       SkeletonLowResRootScale = 'SkeletonLowResRootScale'
+       SkeletonName = 'SkeletonName'
+       SkeletonRootScale = 'SkeletonRootScale'
+       SkeletonRootScaleLowRes = 'SkeletonRootScaleLowRes'
+       SkinnyFactor = 'SkinnyFactor'
+       SmallBan = 'SmallBan'
+       SmashParkedFlyers = 'SmashParkedFlyers'
+       SniperScope = 'SniperScope'
+       SoldierAmmo = 'SoldierAmmo'
+       SoldierAnimation = 'SoldierAnimation'
+       SoldierBan = 'SoldierBan'
+       soldierCollision = 'soldierCollision'
+       Soldiercollision = 'Soldiercollision'
+       SoldierCollision = 'SoldierCollision'
+       SoldierCollisionOnly = 'SoldierCollisionOnly'
+       SoldierCollisionPrim = 'SoldierCollisionPrim'
+       SoldierHealth = 'SoldierHealth'
+       Sound = 'Sound'
+       SoundName = 'SoundName'
+       SoundPitchDev = 'SoundPitchDev'
+       SoundProperty = 'SoundProperty'
+       SpawnPath = 'SpawnPath'
+       SpawnPointCount = 'SpawnPointCount'
+       SpawnPointLocation = 'SpawnPointLocation'
+       SpawnSound = 'SpawnSound'
+       SpawnTime = 'SpawnTime'
+       SpinRate = 'SpinRate'
+       SpreadLimit = 'SpreadLimit'
+       SpreadPerShot = 'SpreadPerShot'
+       SpreadRadius = 'SpreadRadius'
+       SpreadRecover = 'SpreadRecover'
+       SpreadRecoverRate = 'SpreadRecoverRate'
+       SpreadThreshold = 'SpreadThreshold'
+       SquatSound = 'SquatSound'
+       StandMoveSpread = 'StandMoveSpread'
+       StandSound = 'StandSound'
+       StandStillSpread = 'StandStillSpread'
+       static = 'static'
+       Static = 'Static'
+       StatusTexture = 'StatusTexture'
+       steer_left = 'steer_left'
+       steer_right = 'steer_right'
+       steer = 'steer'
+       StickAnimal = 'StickAnimal'
+       StickBuilding = 'StickBuilding'
+       StickBuildingDead = 'StickBuildingDead'
+       StickBuildingUnbuilt = 'StickBuildingUnbuilt'
+       StickDroid = 'StickDroid'
+       StickPerson = 'StickPerson'
+       StickTerrain = 'StickTerrain'
+       StickVehicle = 'StickVehicle'
+       StompDecal = 'StompDecal'
+       StompDecalSize = 'StompDecalSize'
+       StompDetectionType = 'StompDetectionType'
+       StompEffect = 'StompEffect'
+       StompThreshold = 'StompThreshold'
+       StoppedTurnSpeed = 'StoppedTurnSpeed'
+       strafe_left = 'strafe_left'
+       strafe_right = 'strafe_right'
+       strafe = 'strafe'
+       StrafeRollAngle = 'StrafeRollAngle'
+       StrafeSpeed = 'StrafeSpeed'
+       Strategic_Filter1 = 'Strategic_Filter1'
+       Strategic_Filter2 = 'Strategic_Filter2'
+       Strategic_Filter3 = 'Strategic_Filter3'
+       Strategic_Filter4 = 'Strategic_Filter4'
+       Strategic_Filter5 = 'Strategic_Filter5'
+       Strategic_Filter6 = 'Strategic_Filter6'
+       StrikeOrdnanceName = 'StrikeOrdnanceName'
+       SuppressRadius = 'SuppressRadius'
+       SuspensionLeftArmNodeName = 'SuspensionLeftArmNodeName'
+       SuspensionMaxOffset = 'SuspensionMaxOffset'
+       SuspensionMidOffset = 'SuspensionMidOffset'
+       SuspensionNodeName = 'SuspensionNodeName'
+       SuspensionRightArmNodeName = 'SuspensionRightArmNodeName'
+       SwingSpeed = 'SwingSpeed'
+       SwingTime = 'SwingTime'
+       SwitchImmediately = 'SwitchImmediately'
+       TakeoffHeight = 'TakeoffHeight'
+       TakeoffSound = 'TakeoffSound'
+       TakeoffSpeed = 'TakeoffSpeed'
+       TakeoffTime = 'TakeoffTime'
+       TargetableCollision = 'TargetableCollision'
+       TargetAnimal = 'TargetAnimal'
+       TargetBuilding = 'TargetBuilding'
+       TargetDroid = 'TargetDroid'
+       TargetEnemy = 'TargetEnemy'
+       TargetFriendly = 'TargetFriendly'
+       TargetNeutral = 'TargetNeutral'
+       TargetPerson = 'TargetPerson'
+       TargetVehicle = 'TargetVehicle'
+       TEMP_AnimationSpeed = 'TEMP_AnimationSpeed'
+       TEMP_Type = 'TEMP_Type'
+       TerrainCollision = 'TerrainCollision'
+       TerrainCollisionPrim = 'TerrainCollisionPrim'
+       TerrainLeft = 'TerrainLeft'
+       TerrainRight = 'TerrainRight'
+       Texture = 'Texture'
+       ThirdPersonFOV = 'ThirdPersonFOV'
+       throttle_down = 'throttle_down'
+       throttle_up = 'throttle_up'
+       throttle = 'throttle'
+       ThrustAttachOffset = 'ThrustAttachOffset'
+       ThrustAttachPoint = 'ThrustAttachPoint'
+       ThrustEffect = 'ThrustEffect'
+       ThrustEffectMaxScale = 'ThrustEffectMaxScale'
+       ThrustEffectMinScale = 'ThrustEffectMinScale'
+       ThrustEffectScaleStart = 'ThrustEffectScaleStart'
+       ThrustPitchAngle = 'ThrustPitchAngle'
+       TickSound = 'TickSound'
+       TickSoundPitch = 'TickSoundPitch'
+       TiltValue = 'TiltValue'
+       TowCableCollision = 'TowCableCollision'
+       track_pitch_minus = 'track_pitch_minus'
+       track_pitch_plus = 'track_pitch_plus'
+       track_pitch_reset = 'track_pitch_reset'
+       track_yaw_minus = 'track_yaw_minus'
+       track_yaw_plus = 'track_yaw_plus'
+       track_yaw_reset = 'track_yaw_reset'
+       TrackCenter = 'TrackCenter'
+       TrackDeathOnAttach = 'TrackDeathOnAttach'
+       TrackingSound = 'TrackingSound'
+       TrackOffset = 'TrackOffset'
+       Traction = 'Traction'
+       TrailEffect = 'TrailEffect'
+       TrakCenter = 'TrakCenter'
+       TransmitRange = 'TransmitRange'
+       TransparentType = 'TransparentType'
+       TrialEffect = 'TrialEffect'
+       TriggerAll = 'TriggerAll'
+       TriggerAnimation = 'TriggerAnimation'
+       TriggerCollision = 'TriggerCollision'
+       TriggerContact = 'TriggerContact'
+       TriggerOffset = 'TriggerOffset'
+       TriggerRadius = 'TriggerRadius'
+       TriggerSingle = 'TriggerSingle'
+       TriggerTeam = 'TriggerTeam'
+       TurnFilter = 'TurnFilter'
+       TurningOffSound = 'TurningOffSound'
+       TurnOffSound = 'TurnOffSound'
+       TurnOffTime = 'TurnOffTime'
+       TurnOnSound = 'TurnOnSound'
+       TurnOnTime = 'TurnOnTime'
+       TurnRate = 'TurnRate'
+       TurnThreshold = 'TurnThreshold'
+       TurretActivateSound = 'TurretActivateSound'
+       TurretAmbientSound = 'TurretAmbientSound'
+       TurretDeactivateSound = 'TurretDeactivateSound'
+       TurretMoveSound = 'TurretMoveSound'
+       TurretMoveSoundStartEndPitch = 'TurretMoveSoundStartEndPitch'
+       TurretMoveSoundStartEndTime = 'TurretMoveSoundStartEndTime'
+       TurretNodeName = 'TurretNodeName'
+       TurretPitchSound = 'TurretPitchSound'
+       TurretPitchSoundPitch = 'TurretPitchSoundPitch'
+       TURRETSECTION = 'TURRETSECTION'
+       TurretStartSound = 'TurretStartSound'
+       TurretStopSound = 'TurretStopSound'
+       TurretYawSound = 'TurretYawSound'
+       TurretYawSoundPitch = 'TurretYawSoundPitch'
+       UnbuiltGeometryName = 'UnbuiltGeometryName'
+       UnbuiltHoloOdf = 'UnbuiltHoloOdf'
+       unitName = 'unitName'
+       UnitType = 'UnitType'
+       UprightLowResModel = 'UprightLowResModel'
+       UprightWaterDamageHeight = 'UprightWaterDamageHeight'
+       UseVCollForFlyers = 'UseVCollForFlyers'
+       Value_ATK_Alliance = 'Value_ATK_Alliance'
+       Value_ATK_CIS = 'Value_ATK_CIS'
+       Value_ATK_Empire = 'Value_ATK_Empire'
+       Value_ATK_Locals = 'Value_ATK_Locals'
+       Value_ATK_Republic = 'Value_ATK_Republic'
+       Value_DEF_Alliance = 'Value_DEF_Alliance'
+       Value_DEF_CIS = 'Value_DEF_CIS'
+       Value_DEF_Empire = 'Value_DEF_Empire'
+       Value_DEF_Locals = 'Value_DEF_Locals'
+       Value_DEF_Republic = 'Value_DEF_Republic'
+       ValueBleed = 'ValueBleed'
+       VehicleAmmo = 'VehicleAmmo'
+       vehiclecollision = 'vehiclecollision'
+       Vehiclecollision = 'Vehiclecollision'
+       VehicleCollision = 'VehicleCollision'
+       vehiclecollisiononly = 'vehiclecollisiononly'
+       VehicleCollisiononly = 'VehicleCollisiononly'
+       VehicleCollisionOnly = 'VehicleCollisionOnly'
+       VehicleCollisionPrim = 'VehicleCollisionPrim'
+       VehicleCollisionSound = 'VehicleCollisionSound'
+       VehicleHealth = 'VehicleHealth'
+       VehiclePosition = 'VehiclePosition'
+       VehicleScale = 'VehicleScale'
+       VehicleType = 'VehicleType'
+       Velocity = 'Velocity'
+       VelocityDamp = 'VelocityDamp'
+       VelocitySpring = 'VelocitySpring'
+       VerticalSpread = 'VerticalSpread'
+       Vine = 'Vine'
+       Virtual = 'Virtual'
+       VO_All_AllCapture = 'VO_All_AllCapture'
+       VO_All_AllInDispute = 'VO_All_AllInDispute'
+       VO_All_AllInfo = 'VO_All_AllInfo'
+       VO_All_AllLost = 'VO_All_AllLost'
+       VO_All_AllSaved = 'VO_All_AllSaved'
+       VO_All_ImpCapture = 'VO_All_ImpCapture'
+       VO_All_ImpInDispute = 'VO_All_ImpInDispute'
+       VO_All_ImpInfo = 'VO_All_ImpInfo'
+       VO_All_ImpLost = 'VO_All_ImpLost'
+       VO_All_ImpSaved = 'VO_All_ImpSaved'
+       VO_CIS_CISCapture = 'VO_CIS_CISCapture'
+       VO_CIS_CISInDispute = 'VO_CIS_CISInDispute'
+       VO_CIS_CISInfo = 'VO_CIS_CISInfo'
+       VO_CIS_CISLost = 'VO_CIS_CISLost'
+       VO_CIS_CISSaved = 'VO_CIS_CISSaved'
+       VO_CIS_RepCapture = 'VO_CIS_RepCapture'
+       VO_CIS_RepInDispute = 'VO_CIS_RepInDispute'
+       VO_CIS_RepInfo = 'VO_CIS_RepInfo'
+       VO_CIS_RepLost = 'VO_CIS_RepLost'
+       VO_CIS_RepSaved = 'VO_CIS_RepSaved'
+       VO_Imp_AllCapture = 'VO_Imp_AllCapture'
+       VO_Imp_AllInDispute = 'VO_Imp_AllInDispute'
+       VO_Imp_AllInfo = 'VO_Imp_AllInfo'
+       VO_Imp_AllLost = 'VO_Imp_AllLost'
+       VO_Imp_AllSaved = 'VO_Imp_AllSaved'
+       VO_Imp_ImpCapture = 'VO_Imp_ImpCapture'
+       VO_Imp_ImpInDispute = 'VO_Imp_ImpInDispute'
+       VO_Imp_ImpInfo = 'VO_Imp_ImpInfo'
+       VO_Imp_ImpLost = 'VO_Imp_ImpLost'
+       VO_Imp_ImpSaved = 'VO_Imp_ImpSaved'
+       VO_Rep_CISCapture = 'VO_Rep_CISCapture'
+       VO_Rep_CISInDispute = 'VO_Rep_CISInDispute'
+       VO_Rep_CISInfo = 'VO_Rep_CISInfo'
+       VO_Rep_CISLost = 'VO_Rep_CISLost'
+       VO_Rep_CISSaved = 'VO_Rep_CISSaved'
+       VO_Rep_RepCapture = 'VO_Rep_RepCapture'
+       VO_Rep_RepInDispute = 'VO_Rep_RepInDispute'
+       VO_Rep_RepInfo = 'VO_Rep_RepInfo'
+       VO_Rep_RepLost = 'VO_Rep_RepLost'
+       VO_Rep_RepSaved = 'VO_Rep_RepSaved'
+       WakeEffect = 'WakeEffect'
+       WakeWaterSplashEffect = 'WakeWaterSplashEffect'
+       WalkerLegPair = 'WalkerLegPair'
+       WalkerOrientRoll = 'WalkerOrientRoll'
+       WALKERSECTION = 'WALKERSECTION'
+       WalkerWidth = 'WalkerWidth'
+       WaterDamageAmount = 'WaterDamageAmount'
+       WaterDamageInterval = 'WaterDamageInterval'
+       WaterEffect = 'WaterEffect'
+       WaterSplashEffect = 'WaterSplashEffect'
+       WaterWadingSound = 'WaterWadingSound'
+       WaverRate = 'WaverRate'
+       WaverTurn = 'WaverTurn'
+       weapon_fire = 'weapon_fire'
+       weapon_next = 'weapon_next'
+       weapon_prev = 'weapon_prev'
+       weapon_special = 'weapon_special'
+       WeaponAmmo = 'WeaponAmmo'
+       WeaponAmmo1 = 'WeaponAmmo1'
+       WeaponAmmo2 = 'WeaponAmmo2'
+       WeaponAmmo3 = 'WeaponAmmo3'
+       WeaponAmmo4 = 'WeaponAmmo4'
+       WeaponChange = 'WeaponChange'
+       WeaponChangeSound = 'WeaponChangeSound'
+       WeaponChannel = 'WeaponChannel'
+       WeaponChannel1 = 'WeaponChannel1'
+       WeaponChannel2 = 'WeaponChannel2'
+       WeaponChannel3 = 'WeaponChannel3'
+       WeaponChannel4 = 'WeaponChannel4'
+       WeaponClass = 'WeaponClass'
+       WeaponName = 'WeaponName'
+       WeaponName1 = 'WeaponName1'
+       WeaponName2 = 'WeaponName2'
+       WeaponName3 = 'WeaponName3'
+       WeaponName4 = 'WeaponName4'
+       WeaponSection = 'WeaponSection'
+       WEAPONSECTION = 'WEAPONSECTION'
+       WiggleAmount = 'WiggleAmount'
+       WiggleSpeed = 'WiggleSpeed'
+       WindSound = 'WindSound'
+       WingModel = 'WingModel'
+       YawLimits = 'YawLimits'
+       YawSpread = 'YawSpread'
+       YawTurnFactor = 'YawTurnFactor'
+       YOffset = 'YOffset'
+       zoom_factor_minus = 'zoom_factor_minus'
+       zoom_factor_plus = 'zoom_factor_plus'
+       zoom_factor_reset = 'zoom_factor_reset'
+       ZoomFirstPerson = 'ZoomFirstPerson'
+       ZoomMax = 'ZoomMax'
+       ZoomMin = 'ZoomMin'
+       ZoomRate = 'ZoomRate'
 
     def __init__(self, filepath: Path, tokens: list[Token]):
         Document.__init__(self, filepath=filepath)
         Parser.__init__(self, filepath=filepath, tokens=tokens)
 
         self.curr = self
-
-    @staticmethod
-    def read(filename: str = None, filepath: Path = None, file: FileIO = None, stream: StringIO = None) -> Document:
-        lexer = Lexer(filename, filepath, file, stream)
-        tokens: list[Token] = lexer.tokenize()
-
-        odf = ODF(filepath, tokens)
-
-        logger.debug(f'Process {filepath}')
-
-        while odf:
-            if odf.get().type in TK.Whitespaces:
-                odf.discard()  # Discard whitespaces at the start of a line
+    
+    def parse_format(self):
+        while self:
+            if self.get().type in TK.Whitespaces:
+                self.discard()  # Discard whitespaces at the start of a line
 
             # Comment
-            elif odf.get().type in [TK.Slash, TK.Backslash]:
-                odf.consume_until(TK.LineFeed)
+            elif self.get().type in [TK.Slash, TK.Backslash]:
+                self.consume_until(TK.LineFeed)
 
-                comment = Comment(odf.collect_tokens())
-                odf.curr.add(comment)
+                comment = Comment(self.collect_tokens())
+                self.curr.add(comment)
 
-                odf.discard()  # \n
+                self.discard()  # \n
 
             # Section
-            elif odf.get().type == TK.SquareBracketOpen:
-                odf.discard()  # [
+            elif self.get().type == TK.SquareBracketOpen:
+                self.discard()  # [
 
-                odf.consume_until(TK.SquareBracketClose)
+                self.consume_until(TK.SquareBracketClose)
 
-                if odf.curr != odf:
-                    odf.curr = odf.curr.parent
+                if self.curr != odf:
+                    self.curr = odf.curr.parent
 
-                section = Section(odf.collect_tokens())
-                odf.curr = section
-                odf.add(section)
+                section = Section(self.collect_tokens())
+                self.curr = section
+                self.add(section)
 
-                odf.discard()  # ]
+                self.discard()  # ]
 
             # Key value pair
-            elif odf.get().type == TK.Word:
-                while odf.consume(TK.Word):
+            elif self.get().type == TK.Word:
+                while self.consume(TK.Word):
                     pass
 
-                key = Key(odf.collect_tokens())
-                odf.curr.add(key)
+                key = Key(self.collect_tokens())
+                self.curr.add(key)
 
-                while odf.consume_any([TK.EqualSign] + TK.Whitespaces):
+                while self.consume_any([TK.EqualSign] + TK.Whitespaces):
                     pass
 
-                odf.collect_tokens()  # Discard whitespaces and '=' between key and value
+                self.collect_tokens()  # Discard whitespaces and '=' between key and value
 
-                odf.consume_until(TK.LineFeed)
+                self.consume_until(TK.LineFeed)
 
-                value = Value(odf.collect_tokens())
-                odf.curr.add(value)
+                value = Value(self.collect_tokens())
+                self.curr.add(value)
 
-                odf.discard()  # \n
+                self.discard()  # \n
 
             # Either skip or thow error
             else:
-                logger.warning(f'Unrecognized token "{odf.get()} ({odf.tokens()})".')
-                odf.discard()
-                # odf.error(TK.Null)
+                logger.warning(f'Unrecognized token "{self.get()} ({odf.tokens()})".')
+                self.discard()
+                # self.error(TK.Null)
 
-        return odf
+        return self
 
 
 if __name__ == '__main__':
@@ -1167,6 +1157,7 @@ if __name__ == '__main__':
         path = Path(sys.argv[1])
         if path.is_file():
             odf = ODF.read(filepath=path)
+            odf.print()
         else:
             for file in path.rglob('*.odf'):
                 odf = ODF.read(filepath=file)
