@@ -1,2 +1,4 @@
 Jinja2~=3.1.5
 websockets~=13.1
+parxel~=0.0.5
+swbf-pymunge~=0.0.1
